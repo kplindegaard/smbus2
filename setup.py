@@ -82,7 +82,7 @@ It is possible to write 32 bytes at the time, but I have found that error-prone.
 
 setup(
     name="smbus2",
-    version="0.1.0",
+    version="0.1.1",
     author="Karl-Petter Lindegaard",
     author_email="kp.lindegaard@gmail.com",
     description="A drop-in replacement for smbus-cffi/smbus-python in pure Python",

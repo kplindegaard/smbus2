@@ -1,4 +1,4 @@
-from smbus2 import SMBus, SMBusWrapper
+from .smbus2 import SMBus, SMBusWrapper
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 
