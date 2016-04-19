@@ -33,6 +33,7 @@ Example 1a: Read a byte
     from smbus2 import SMBus
 
     # Open i2c bus 1 and read one byte from address 80, offset 0
+
     bus = SMBus(1)
     b = bus.read_byte_data(80, 0)
     print(b)
@@ -40,7 +41,7 @@ Example 1a: Read a byte
 
 Example 1b: Read a byte using 'with'
 
-This is the very same example but safer to use since the smbus will be closed automatically when exiting the while block.
+This is the very same example but safer to use since the smbus will be closed automatically when exiting the with block.
 
     from smbus2 import SMBusWrapper
 
@@ -50,13 +51,16 @@ This is the very same example but safer to use since the smbus will be closed au
 
 Example 2: Read a block of data
 
+Note: You can read up to 32 bytes at once.
+
     from smbus2 import SMBusWrapper
 
     with SMBusWrapper(1) as bus:
         # Read a block of 16 bytes from address 80, offset 0
-        # Note: You can read up to 32 bytes at once
+
         block = bus.read_i2c_block_data(80, 0, 16)
         # Returned value is a list of 16 bytes
+
         print(block)
 
 Example 3: Write a byte
@@ -65,6 +69,7 @@ Example 3: Write a byte
 
     with SMBusWrapper(1) as bus:
         # Write a byte to address 80, offset 0
+
         data = 45
         bus.write_byte_data(80, 0, data)
 
@@ -76,18 +81,19 @@ It is possible to write 32 bytes at the time, but I have found that error-prone.
 
     with SMBusWrapper(1) as bus:
         # Write a block of 8 bytes to address 80 from offset 0
+
         data = [1, 2, 3, 4, 5, 6, 7, 8]
         bus.write_i2c_block_data(80, 0, data)
 """
 
 setup(
     name="smbus2",
-    version="0.1.1",
+    version="0.1.2",
     author="Karl-Petter Lindegaard",
     author_email="kp.lindegaard@gmail.com",
-    description="A drop-in replacement for smbus-cffi/smbus-python in pure Python",
+    description="smbus2 is a drop-in replacement for smbus-cffi/smbus-python in pure Python",
     license="MIT",
-    keywords= "smbus python i2c raspberrypi linux",
+    keywords=['smbus', 'smbus2', 'python', 'i2c', 'raspberrypi', 'linux'],
     url="https://github.com/kplindegaard/smbus2",
     packages=['smbus2'],
     long_description=readme,
@@ -95,5 +101,7 @@ setup(
         "Development Status :: 4 - Beta",
         "Topic :: Utilities",
         "License :: OSI Approved :: MIT License",
+        "Programming Language :: Python :: 2.7",
+        "Programming Language :: Python :: 3"
     ],
 )

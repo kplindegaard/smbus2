@@ -38,7 +38,7 @@ smbus2 installs next to smbus as the package, so it's not really a 100% replacem
     
 ## Example 1b: Read a byte using 'with'
 
-This is the very same example but safer to use since the smbus will be closed automatically when exiting the while block.
+This is the very same example but safer to use since the smbus will be closed automatically when exiting the with block.
 
     from smbus2 import SMBusWrapper
     
@@ -48,11 +48,12 @@ This is the very same example but safer to use since the smbus will be closed au
 
 ## Example 2: Read a block of data
 
+You can read up to 32 bytes at once.
+
     from smbus2 import SMBusWrapper
     
     with SMBusWrapper(1) as bus:
         # Read a block of 16 bytes from address 80, offset 0
-        # Note: You can read up to 32 bytes at once
         block = bus.read_i2c_block_data(80, 0, 16)
         # Returned value is a list of 16 bytes
         print(block)
@@ -83,5 +84,6 @@ smbus2 is pure Python code and requires no compilation. Installation is easy:
 
     python setup.py install
     
+Or just use pip
 
-
+    pip install smbus2
