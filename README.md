@@ -1,6 +1,8 @@
 # smbus2
 A drop-in replacement for smbus-cffi/smbus-python in pure Python
 
+[![Build Status](https://travis-ci.org/kplindegaard/smbus2.svg?branch=master)](https://travis-ci.org/kplindegaard/smbus2) 
+
 # Introduction
 
 smbus2 is (yet another) pure Python implementation of of the [python-smbus](http://www.lm-sensors.org/browser/i2c-tools/trunk/py-smbus/) package.
