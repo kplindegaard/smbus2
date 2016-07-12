@@ -125,7 +125,7 @@ class SMBus(object):
         """
         self.fd = None
         self.funcs = 0
-        if bus:
+        if bus is not None:
             self.open(bus)
         self.address = None
 
