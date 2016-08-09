@@ -153,6 +153,7 @@ class SMBus(object):
         :param address:
         """
         if self.address != address:
+            self.address = address
             ioctl(self.fd, I2C_SLAVE, address)
 
     def _get_funcs(self):
