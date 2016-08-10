@@ -27,6 +27,7 @@ from ctypes import c_uint32, c_uint8, c_uint16, POINTER, Structure, Array, Union
 
 # Commands from uapi/linux/i2c-dev.h
 I2C_SLAVE = 0x0703  # Use this slave address
+I2C_SLAVE_FORCE = 0x0706  # Use this slave address, even if it is already in use by a driver!
 I2C_FUNCS = 0x0705  # Get the adapter functionality mask
 I2C_SMBUS = 0x0720  # SMBus transfer. Takes pointer to i2c_smbus_ioctl_data
 
@@ -117,17 +118,20 @@ class i2c_smbus_ioctl_data(Structure):
 
 class SMBus(object):
 
-    def __init__(self, bus=None):
-        # type: (int) -> None
+    def __init__(self, bus=None, force=False):
+        # type: (int, bool) -> None
         """
         Initialize and (optionally) open an i2c bus connection.
         :param bus: i2c bus number (e.g. 0 or 1). If not given, a subsequent call to open() is required.
+        :param force: force using the slave address even when driver is already using it
+        :type force: Boolean
         """
         self.fd = None
         self.funcs = 0
         if bus is not None:
             self.open(bus)
         self.address = None
+        self.force = force
 
     def open(self, bus):
         # type: (int) -> None
@@ -154,7 +158,10 @@ class SMBus(object):
         """
         if self.address != address:
             self.address = address
-            ioctl(self.fd, I2C_SLAVE, address)
+            if self.force:
+                ioctl(self.fd, I2C_SLAVE_FORCE, address)
+            else:
+                ioctl(self.fd, I2C_SLAVE, address)
 
     def _get_funcs(self):
         """
