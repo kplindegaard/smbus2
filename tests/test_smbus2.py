@@ -22,10 +22,66 @@
 from smbus2 import SMBus, SMBusWrapper
 import unittest
 
-# Note: Below is a subset of my own unittests, and they will probably not work for you.
-# Included for inspiration.
+try:
+    import mock
+except ImportError:
+    import unittest.mock as mock
 
 
+##########################################################################
+# Mock open, close and ioctl so we can run our unit tests anywhere.
+
+# Required I2C constant definitions repeated
+I2C_SMBUS = 0x0720
+I2C_SMBUS_READ = 1
+I2C_SMBUS_BYTE_DATA = 2
+I2C_SMBUS_WORD_DATA = 3
+I2C_SMBUS_BLOCK_DATA = 5  # Can't get this one to work on my Raspberry Pi
+I2C_SMBUS_I2C_BLOCK_DATA = 8
+I2C_SMBUS_BLOCK_MAX = 32
+
+MOCK_FD = "Mock file descriptor"
+
+# Test buffer for read operations
+test_buffer = [x for x in range(256)]
+
+
+def mock_open(*args):
+    print("Mocking open: %s" % args[0])
+    return MOCK_FD
+
+
+def mock_close(*args):
+    assert args[0] == MOCK_FD
+
+
+def mock_ioctl(fd, command, msg):
+    print("Mocking ioctl")
+    assert fd == MOCK_FD
+    assert command is not None
+
+    # Reproduce ioctl read operations
+    if command == I2C_SMBUS and msg.read_write == I2C_SMBUS_READ:
+        offset = msg.command
+        if msg.size == I2C_SMBUS_BYTE_DATA:
+            msg.data.contents.byte = test_buffer[offset]
+        elif msg.size == I2C_SMBUS_WORD_DATA:
+            msg.data.contents.word = test_buffer[offset+1]*256 + test_buffer[offset]
+        elif msg.size == I2C_SMBUS_I2C_BLOCK_DATA:
+            for k in range(msg.data.contents.byte):
+                msg.data.contents.block[k+1] = test_buffer[offset+k]
+
+# Override open, close and ioctl with our mock functions
+open_mock = mock.patch('smbus2.smbus2.os.open', mock_open)
+close_mock = mock.patch('smbus2.smbus2.os.close', mock_close)
+ioctl_mock = mock.patch('smbus2.smbus2.ioctl', mock_ioctl)
+open_mock.start()
+close_mock.start()
+ioctl_mock.start()
+##########################################################################
+
+
+# Test cases
 class TestSMBus(unittest.TestCase):
     def test_func(self):
         bus = SMBus(1)

@@ -21,7 +21,7 @@ Currently supported features are:
 * read_i2c_block_data
 * write_i2c_block_data
 
-It is developed on Python 2.7, but should work in Python 3.X too.
+It is developed on Python 2.7 but works without modifications in Python 3.X too.
 
 Code examples
 -------------
@@ -88,7 +88,7 @@ It is possible to write 32 bytes at the time, but I have found that error-prone.
 
 setup(
     name="smbus2",
-    version="0.1.2",
+    version="0.1.3",
     author="Karl-Petter Lindegaard",
     author_email="kp.lindegaard@gmail.com",
     description="smbus2 is a drop-in replacement for smbus-cffi/smbus-python in pure Python",

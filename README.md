@@ -22,7 +22,7 @@ Currently supported features are:
 * read_i2c_block_data
 * write_i2c_block_data
 
-It is developed on Python 2.7, but should work in Python 3.X too.
+It is developed on Python 2.7 but works without any modifications in Python 3.X too.
 
 # Code examples
 
