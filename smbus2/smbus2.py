@@ -280,12 +280,13 @@ class SMBusWrapper:
     the SMBus class in a "with" statement. Will automatically close the SMBus handle upon
     exit of the with block.
     """
-    def __init__(self, bus_number=0, auto_cleanup=True):
+    def __init__(self, bus_number=0, auto_cleanup=True, force=False):
         self.bus_number = bus_number
         self.auto_cleanup = auto_cleanup
+        self.force = force
 
     def __enter__(self):
-        self.bus = SMBus(self.bus_number)
+        self.bus = SMBus(bus=self.bus_number, force=self.force)
         return self.bus
 
     def __exit__(self, exc_type, exc_val, exc_tb):
