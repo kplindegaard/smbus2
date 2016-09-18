@@ -281,6 +281,12 @@ class SMBusWrapper:
     exit of the with block.
     """
     def __init__(self, bus_number=0, auto_cleanup=True, force=False):
+        """
+        :param auto_cleanup: Close bus when leaving scope.
+        :type auto_cleanup: Boolean
+        :param force: Force using the slave address even when driver is already using it.
+        :type force: Boolean
+        """
         self.bus_number = bus_number
         self.auto_cleanup = auto_cleanup
         self.force = force
