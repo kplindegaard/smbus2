@@ -173,13 +173,12 @@ class SMBus(object):
         ioctl(self.fd, I2C_FUNCS, f)
         return f.value
 
-    def send_byte(self, i2c_addr, value):
+    def write_byte(self, i2c_addr, value):
         # type: (int, int) -> None
         """
-        Read a single byte from a designated register.
-        :rtype: int
+        Write a single byte to a device
         :param i2c_addr: i2c address
-        :param value: value to send
+        :param value: value to write
         """
         self._set_address(i2c_addr)
         msg = i2c_smbus_ioctl_data.create(
