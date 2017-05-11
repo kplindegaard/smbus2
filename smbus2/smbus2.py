@@ -179,7 +179,7 @@ class SMBus(object):
         Read a single byte from a designated register.
         :rtype: int
         :param i2c_addr: i2c address
-        :param register: value to send
+        :param value: value to send
         """
         self._set_address(i2c_addr)
         msg = i2c_smbus_ioctl_data.create(
