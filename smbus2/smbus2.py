@@ -36,6 +36,7 @@ I2C_SMBUS_WRITE = 0
 I2C_SMBUS_READ = 1
 
 # Size identifiers uapi/linux/i2c.h
+I2C_SMBUS_BYTE = 1
 I2C_SMBUS_BYTE_DATA = 2
 I2C_SMBUS_WORD_DATA = 3
 I2C_SMBUS_BLOCK_DATA = 5  # Can't get this one to work on my Raspberry Pi
@@ -171,6 +172,20 @@ class SMBus(object):
         f = c_uint32()
         ioctl(self.fd, I2C_FUNCS, f)
         return f.value
+
+    def send_byte(self, i2c_addr, value):
+        # type: (int, int) -> None
+        """
+        Read a single byte from a designated register.
+        :rtype: int
+        :param i2c_addr: i2c address
+        :param register: value to send
+        """
+        self._set_address(i2c_addr)
+        msg = i2c_smbus_ioctl_data.create(
+            read_write=I2C_SMBUS_WRITE, command=value, size=I2C_SMBUS_BYTE
+        )
+        ioctl(self.fd, I2C_SMBUS, msg)
 
     def read_byte_data(self, i2c_addr, register):
         # type: (int, int) -> int
