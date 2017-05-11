@@ -20,6 +20,7 @@ It was designed from the ground up with two goals in mind:
 Currently supported features are:
 
 * Get i2c capabilities (I2C_FUNCS)
+* write_byte
 * read_byte_data
 * write_byte_data
 * read_word_data
