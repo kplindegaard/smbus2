@@ -8,7 +8,7 @@ with open(path.join(here, 'README.rst'), 'r') as f:
 
 setup(
     name="smbus2",
-    version="0.1.4",
+    version="0.1.5",
     author="Karl-Petter Lindegaard",
     author_email="kp.lindegaard@gmail.com",
     description="smbus2 is a drop-in replacement for smbus-cffi/smbus-python in pure Python",

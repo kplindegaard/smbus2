@@ -15,11 +15,12 @@ smbus2 is (yet another) pure Python implementation of the `python-smbus <http://
 It was designed from the ground up with two goals in mind:
 
 1. It should be a drop-in replacement of smbus. The syntax shall be the same.
-2. Use the inherent i2c structs and unions to a greater extend than other pure Python implementations like `pysmbus <https://github.com/bjornt/pysmbus>`_ does. By doing so, it will be more feature complete and easier to extend.
+2. Use the inherent i2c structs and unions to a greater extent than other pure Python implementations like `pysmbus <https://github.com/bjornt/pysmbus>`_ does. By doing so, it will be more feature complete and easier to extend.
 
 Currently supported features are:
 
 * Get i2c capabilities (I2C_FUNCS)
+* read_byte
 * write_byte
 * read_byte_data
 * write_byte_data

@@ -173,6 +173,21 @@ class SMBus(object):
         ioctl(self.fd, I2C_FUNCS, f)
         return f.value
 
+    def read_byte(self, i2c_addr):
+        # type: (int) -> int
+        """
+        Read a single byte from a device
+        :rtype: int
+        :param i2c_addr: i2c address
+        :return: Read byte value
+        """
+        self._set_address(i2c_addr)
+        msg = i2c_smbus_ioctl_data.create(
+            read_write=I2C_SMBUS_READ, command=0, size=I2C_SMBUS_BYTE
+        )
+        ioctl(self.fd, I2C_SMBUS, msg)
+        return msg.data.contents.byte
+
     def write_byte(self, i2c_addr, value):
         # type: (int, int) -> None
         """
