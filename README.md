@@ -23,10 +23,11 @@ Currently supported features are:
 * write_word_data
 * read_i2c_block_data
 * write_i2c_block_data
+* i2c_rdwr - *combined write/read transactions with repeated start*
 
 It is developed on Python 2.7 but works without any modifications in Python 3.X too.
 
-# Code examples
+# SMBus code examples
 
 smbus2 installs next to smbus as the package, so it's not really a 100% replacement. You must change the module name.
 
@@ -81,6 +82,59 @@ It is possible to write 32 bytes at the time, but I have found that error-prone.
         # Write a block of 8 bytes to address 80 from offset 0
         data = [1, 2, 3, 4, 5, 6, 7, 8]
         bus.write_i2c_block_data(80, 0, data)
+
+# I2C
+
+Starting with v0.2, the smbus2 library also has support for combined read and write transactions. *i2c_rdwr* is not really a SMBus feature but comes in handy when the master needs to:
+
+1. read or write bulks of data larger than SMBus' 32 bytes limit.
+1. write some data and then read from the slave with a repeated start and no stop bit between.
+
+Each operation is represented by a *i2c_msg* message object.
+
+
+## Example 5: Single i2c_rdwr
+
+    from smbus2 import SMBus, ic_msg
+    
+    with SMBusWrapper(1) as bus:
+        # Read 64 bytes from address 80
+        msg = i2c_msg.read(80, 64)
+        bus.i2c_rdwr(msg)
+        
+        # Write some bytes to address 80
+        msg = i2c_msg.write(80, [65, 66, 67, 68])
+        bus.i2c_rdwr(msg)
+
+## Example 6: Dual i2c_rdwr
+
+To perform dual operations just add more i2c_msg instances to the bus call:
+
+    from smbus2 import SMBus, ic_msg
+    
+    # Single transaction writing two bytes then read two at address 80
+    write = i2c_msg.write(80, [40, 50])
+    read = i2c_msg.read(80, 2)
+    with SMBusWrapper(1) as bus:
+        bus.i2c_rdwr(write, read)
+
+## Example 7: Access i2c_msg data
+
+All data is contained in the i2c_msg instances. Here are some data access alternatives.
+
+        # 1: Convert message content to list
+        msg = i2c.write(60, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+        data = list(msg)  # data = [1, 2, 3, ...]
+        print(len(data))  # => 10
+        
+        # 2: i2c_msg is iterable
+        for value in msg:
+            print(value)
+        
+        # 3: Through i2c_msg properties
+        for k in range(msg.len):
+            print(msg.buf[k])
+
 
 # Installation instructions
 
