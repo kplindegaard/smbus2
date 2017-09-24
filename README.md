@@ -95,7 +95,7 @@ Each operation is represented by a *i2c_msg* message object.
 
 ## Example 5: Single i2c_rdwr
 
-    from smbus2 import SMBus, ic_msg
+    from smbus2 import SMBus, i2c_msg
     
     with SMBusWrapper(1) as bus:
         # Read 64 bytes from address 80
@@ -110,7 +110,7 @@ Each operation is represented by a *i2c_msg* message object.
 
 To perform dual operations just add more i2c_msg instances to the bus call:
 
-    from smbus2 import SMBus, ic_msg
+    from smbus2 import SMBus, i2c_msg
     
     # Single transaction writing two bytes then read two at address 80
     write = i2c_msg.write(80, [40, 50])
