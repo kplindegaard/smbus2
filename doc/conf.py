@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+# The MIT License (MIT)
+# Copyright (c) 2017 Karl-Petter Lindegaard
 #
 # smbus2 documentation build configuration file.
 #
@@ -49,8 +51,8 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'smbus2'
-copyright = '2017, Karl-Petter Lindegaard'
 author = 'Karl-Petter Lindegaard'
+copyright = '2017, {}'.format(author)
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the

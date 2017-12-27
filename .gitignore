@@ -1,4 +1,8 @@
+.tox/
 doc/_build
+build/
+dist/
 
+*.pyc
 *.egg-info
 __pycache__

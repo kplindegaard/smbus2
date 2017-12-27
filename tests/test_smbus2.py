@@ -23,9 +23,9 @@ from smbus2 import SMBus, SMBusWrapper
 import unittest
 
 try:
-    import mock
-except ImportError:
     import unittest.mock as mock
+except ImportError:
+    import mock # noqa: F401
 
 
 ##########################################################################

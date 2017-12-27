@@ -1,3 +1,6 @@
+# The MIT License (MIT)
+# Copyright (c) 2017 Karl-Petter Lindegaard
+
 from setuptools import setup
 from os import path
 
@@ -5,6 +8,11 @@ from os import path
 here = path.abspath(path.dirname(__file__))
 with open(path.join(here, 'README.rst'), 'r') as f:
     readme = f.read()
+
+test_deps = [
+    'mock;python_version<"3.3"',
+    'nose'
+]
 
 setup(
     name="smbus2",
@@ -22,12 +30,9 @@ setup(
             'sphinx >= 1.5.3'
         ],
         'qa': [
-            'rstcheck',
             'flake8'
         ],
-        'test': [
-            'nose'
-        ]
+        'test': test_deps
     },
     classifiers=[
         "Development Status :: 4 - Beta",
