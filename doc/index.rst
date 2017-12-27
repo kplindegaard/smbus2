@@ -1,20 +1,16 @@
-.. smbus2 documentation master file, created by
-   sphinx-quickstart on Wed Dec 27 19:13:54 2017.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+smbus2
+======
+.. image:: https://travis-ci.org/kplindegaard/smbus2.svg?branch=master
+   :target: https://travis-ci.org/kplindegaard/smbus2
 
-Welcome to smbus2's documentation!
-==================================
+.. image:: https://img.shields.io/pypi/pyversions/smbus2.svg
+    :target: https://pypi.python.org/pypi/smbus2
 
-.. toctree::
-   :maxdepth: 2
-   :caption: Contents:
+.. image:: https://img.shields.io/pypi/v/smbus2.svg
+   :target: https://pypi.python.org/pypi/smbus2
 
+.. automodule:: smbus2.smbus2
+    :members:
+    :undoc-members:
+    :show-inheritance:
 
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
