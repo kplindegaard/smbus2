@@ -30,7 +30,7 @@ from ctypes import c_uint32, c_uint8, c_uint16, c_char, POINTER, Structure, Arra
 I2C_SLAVE = 0x0703  # Use this slave address
 I2C_SLAVE_FORCE = 0x0706  # Use this slave address, even if it is already in use by a driver!
 I2C_FUNCS = 0x0705  # Get the adapter functionality mask
-I2C_RDWR  = 0x0707  # Combined R/W transfer (one STOP only)
+I2C_RDWR = 0x0707  # Combined R/W transfer (one STOP only)
 I2C_SMBUS = 0x0720  # SMBus transfer. Takes pointer to i2c_smbus_ioctl_data
 
 # SMBus transfer read or write markers from uapi/linux/i2c.h
@@ -85,7 +85,7 @@ class i2c_smbus_data(Array):
 
     Data for SMBus messages.
     """
-    _length_ = I2C_SMBUS_BLOCK_MAX+2
+    _length_ = I2C_SMBUS_BLOCK_MAX + 2
     _type_ = c_uint8
 
 
@@ -95,6 +95,7 @@ class union_i2c_smbus_data(Union):
         ("word", c_uint16),
         ("block", i2c_smbus_data)
     ]
+
 
 union_pointer_type = POINTER(union_i2c_smbus_data)
 
@@ -198,6 +199,7 @@ class i2c_rdwr_ioctl_data(Structure):
             msgs=msg_array,
             nmsgs=n_msg
         )
+
 
 class i2c_msg_iter:
     """
@@ -389,7 +391,7 @@ class SMBus(object):
         )
         msg.data.contents.byte = length
         ioctl(self.fd, I2C_SMBUS, msg)
-        return msg.data.contents.block[1:length+1]
+        return msg.data.contents.block[1:length + 1]
 
     def write_i2c_block_data(self, i2c_addr, register, data):
         # type: (int, int, list) -> None

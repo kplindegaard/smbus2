@@ -25,7 +25,7 @@ import unittest
 try:
     import unittest.mock as mock
 except ImportError:
-    import mock # noqa: F401
+    import mock  # noqa: F401
 
 
 ##########################################################################
@@ -66,10 +66,11 @@ def mock_ioctl(fd, command, msg):
         if msg.size == I2C_SMBUS_BYTE_DATA:
             msg.data.contents.byte = test_buffer[offset]
         elif msg.size == I2C_SMBUS_WORD_DATA:
-            msg.data.contents.word = test_buffer[offset+1]*256 + test_buffer[offset]
+            msg.data.contents.word = test_buffer[offset + 1] * 256 + test_buffer[offset]
         elif msg.size == I2C_SMBUS_I2C_BLOCK_DATA:
             for k in range(msg.data.contents.byte):
-                msg.data.contents.block[k+1] = test_buffer[offset+k]
+                msg.data.contents.block[k + 1] = test_buffer[offset + k]
+
 
 # Override open, close and ioctl with our mock functions
 open_mock = mock.patch('smbus2.smbus2.os.open', mock_open)

@@ -19,10 +19,9 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from smbus2.smbus2 import i2c_smbus_ioctl_data, union_i2c_smbus_data, i2c_msg, i2c_rdwr_ioctl_data
+from smbus2.smbus2 import i2c_smbus_ioctl_data, union_i2c_smbus_data, i2c_msg, i2c_rdwr_ioctl_data  # noqa: F401
 from smbus2.smbus2 import I2C_SMBUS_BLOCK_MAX, I2C_SMBUS_READ, I2C_SMBUS_BYTE_DATA
 import unittest
-
 
 
 class TestDataTypes(unittest.TestCase):
@@ -31,8 +30,8 @@ class TestDataTypes(unittest.TestCase):
         u = union_i2c_smbus_data()
 
         # Fill array with values 1, 2, ...
-        for k in range(I2C_SMBUS_BLOCK_MAX+2):
-            u.block[k] = k+1
+        for k in range(I2C_SMBUS_BLOCK_MAX + 2):
+            u.block[k] = k + 1
 
         # Check that the union works
         self.assertEqual(u.byte, u.block[0], msg="Byte field differ")
@@ -43,7 +42,7 @@ class TestDataTypes(unittest.TestCase):
         self.assertEqual(u.block[0], 255, msg="Byte field not reflected in array")
 
         # Reset array to zeros and check word field
-        for k in range(I2C_SMBUS_BLOCK_MAX+2):
+        for k in range(I2C_SMBUS_BLOCK_MAX + 2):
             u.block[k] = 0
         u.word = 1607
         self.assertNotEqual(0, u.word, msg="Word field is zero but should be non-zero")
@@ -85,8 +84,8 @@ class TestDataTypes(unittest.TestCase):
         buf = [10, 11, 12, 13]
         msg = i2c_msg.write(81, buf)
         # Convert msg to list and compare
-        l = list(msg)
-        self.assertListEqual(buf, l)
+        msg_list = list(msg)
+        self.assertListEqual(buf, msg_list)
         # Loop over each message entry
         i = 0
         for value in msg:
@@ -94,4 +93,4 @@ class TestDataTypes(unittest.TestCase):
             i += 1
         # Loop over with index and value
         for i, value in enumerate(msg):
-            self.assertEqual(i+10, value)
+            self.assertEqual(i + 10, value)
