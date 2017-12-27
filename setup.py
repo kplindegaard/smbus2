@@ -1,14 +1,32 @@
 # The MIT License (MIT)
 # Copyright (c) 2017 Karl-Petter Lindegaard
 
+import re
+import os
+import sys
+from io import open
 from setuptools import setup
-from os import path
 
-# Get the long description from the README file
-here = path.abspath(path.dirname(__file__))
-with open(path.join(here, 'README.rst'), 'r') as f:
-    readme = f.read()
 
+def read_file(fname, encoding='utf-8'):
+    with open(fname, encoding=encoding) as r:
+        return r.read()
+
+
+def find_version(*file_paths):
+    fpath = os.path.join(os.path.dirname(__file__), *file_paths)
+    version_file = read_file(fpath)
+    version_match = re.search(r"^__version__ = ['\"]([^'\"]*)['\"]",
+                              version_file, re.M)
+    if version_match:
+        return version_match.group(1)
+
+    err_msg = 'Unable to find version string in {}'.format(fpath)
+    raise RuntimeError(err_msg)
+
+
+README = read_file('README.rst')
+version = find_version('smbus2', '__init__.py')
 test_deps = [
     'mock;python_version<"3.3"',
     'nose'
@@ -16,7 +34,7 @@ test_deps = [
 
 setup(
     name="smbus2",
-    version="0.2.0",
+    version=version,
     author="Karl-Petter Lindegaard",
     author_email="kp.lindegaard@gmail.com",
     description="smbus2 is a drop-in replacement for smbus-cffi/smbus-python in pure Python",
@@ -24,7 +42,7 @@ setup(
     keywords=['smbus', 'smbus2', 'python', 'i2c', 'raspberrypi', 'linux'],
     url="https://github.com/kplindegaard/smbus2",
     packages=['smbus2'],
-    long_description=readme,
+    long_description=README,
     extras_require={
         'docs': [
             'sphinx >= 1.5.3'
