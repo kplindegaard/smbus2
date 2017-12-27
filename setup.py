@@ -17,6 +17,18 @@ setup(
     url="https://github.com/kplindegaard/smbus2",
     packages=['smbus2'],
     long_description=readme,
+    extras_require={
+        'docs': [
+            'sphinx >= 1.5.3'
+        ],
+        'qa': [
+            'rstcheck',
+            'flake8'
+        ],
+        'test': [
+            'nose'
+        ]
+    },
     classifiers=[
         "Development Status :: 4 - Beta",
         "Topic :: Utilities",
