@@ -2,10 +2,14 @@ smbus2
 ======
 A drop-in replacement for smbus-cffi/smbus-python in pure Python
 
-|travis|
+|travis| |rtfd|
 
 .. |travis| image:: https://travis-ci.org/kplindegaard/smbus2.svg?branch=master
      :target: https://travis-ci.org/kplindegaard/smbus2
+
+.. |rtfd| image:: https://readthedocs.org/projects/smbus2/badge/?version=latest
+     :target: http://smbus2.readthedocs.io/en/latest/?badge=latest
+     :alt: Documentation Status
 
 Introduction
 ============

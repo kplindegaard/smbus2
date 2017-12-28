@@ -2,6 +2,7 @@
 A drop-in replacement for smbus-cffi/smbus-python in pure Python
 
 [![Build Status](https://travis-ci.org/kplindegaard/smbus2.svg?branch=master)](https://travis-ci.org/kplindegaard/smbus2) 
+[![Documentation Status](https://readthedocs.org/projects/smbus2/badge/?version=latest)](http://smbus2.readthedocs.io/en/latest/?badge=latest)
 
 # Introduction
 
