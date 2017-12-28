@@ -9,8 +9,7 @@ smbus2
 .. image:: https://img.shields.io/pypi/v/smbus2.svg
    :target: https://pypi.python.org/pypi/smbus2
 
-.. automodule:: smbus2.smbus2
-    :members:
+.. automodule:: smbus2
+    :members: SMBus, SMBusWrapper, i2c_msg
     :undoc-members:
-    :show-inheritance:
 

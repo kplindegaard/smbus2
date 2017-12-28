@@ -1,3 +1,4 @@
+"""smbus2 - A drop-in replacement for smbus-cffi/smbus-python"""
 # The MIT License (MIT)
 # Copyright (c) 2017 Karl-Petter Lindegaard
 #

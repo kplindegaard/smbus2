@@ -143,7 +143,9 @@ class i2c_msg(Structure):
         Prepares an i2c read transaction.
 
         :param address: Slave address.
+        :type: address: int
         :param length: Number of bytes to read.
+        :type: length: int
         :return: New :py:class:`i2c_msg` instance for read operation.
         :rtype: :py:class:`i2c_msg`
         """
@@ -158,7 +160,9 @@ class i2c_msg(Structure):
         Prepares an i2c write transaction.
 
         :param address: Slave address.
-        :param buf: Bytes to write. Either list of values or string.
+        :type address: int
+        :param buf: Bytes to write. Either list of values or str.
+        :type buf: list
         :return: New :py:class:`i2c_msg` instance for write operation.
         :rtype: :py:class:`i2c_msg`
         """
@@ -237,11 +241,11 @@ class SMBus(object):
 
         :param bus: i2c bus number (e.g. 0 or 1). If not given, a subsequent
             call to ``open()`` is required.
+        :type bus: int
         :param force: force using the slave address even when driver is
             already using it.
         :type force: boolean
         """
-        # type: (int, bool) -> None
         self.fd = None
         self.funcs = 0
         if bus is not None:
@@ -254,8 +258,8 @@ class SMBus(object):
         Open a given i2c bus.
 
         :param bus: i2c bus number (e.g. 0 or 1)
+        :type bus: int
         """
-        # type: (int) -> None
         self.fd = os.open("/dev/i2c-{}".format(bus), os.O_RDWR)
         self.funcs = self._get_funcs()
 
@@ -272,8 +276,8 @@ class SMBus(object):
         Set i2c slave address to use for subsequent calls.
 
         :param address:
+        :type address: int
         """
-        # type: (int) -> None
         if self.address != address:
             self.address = address
             if self.force:
@@ -297,9 +301,9 @@ class SMBus(object):
 
         :rtype: int
         :param i2c_addr: i2c address
+        :type i2c_addr: int
         :return: Read byte value
         """
-        # type: (int) -> int
         self._set_address(i2c_addr)
         msg = i2c_smbus_ioctl_data.create(
             read_write=I2C_SMBUS_READ, command=0, size=I2C_SMBUS_BYTE
@@ -312,9 +316,10 @@ class SMBus(object):
         Write a single byte to a device.
 
         :param i2c_addr: i2c address
+        :type i2c_addr: int
         :param value: value to write
+        :type value: int
         """
-        # type: (int, int) -> None
         self._set_address(i2c_addr)
         msg = i2c_smbus_ioctl_data.create(
             read_write=I2C_SMBUS_WRITE, command=value, size=I2C_SMBUS_BYTE
@@ -326,11 +331,12 @@ class SMBus(object):
         Read a single byte from a designated register.
 
         :param i2c_addr: i2c address
+        :type i2c_addr: int
         :param register: Register to read
+        :type register: int
         :return: Read byte value
         :rtype: int
         """
-        # type: (int, int) -> int
         self._set_address(i2c_addr)
         msg = i2c_smbus_ioctl_data.create(
             read_write=I2C_SMBUS_READ, command=register, size=I2C_SMBUS_BYTE_DATA
@@ -343,10 +349,13 @@ class SMBus(object):
         Write a byte to a given register.
 
         :param i2c_addr: i2c address
+        :type i2c_addr: int
         :param register: Register to write to
+        :type register: int
         :param value: Byte value to transmit
+        :type value: int
+        :rtype: None
         """
-        # type: (int, int, int) -> None
         self._set_address(i2c_addr)
         msg = i2c_smbus_ioctl_data.create(
             read_write=I2C_SMBUS_WRITE, command=register, size=I2C_SMBUS_BYTE_DATA
@@ -359,11 +368,12 @@ class SMBus(object):
         Read a single word (2 bytes) from a given register.
 
         :param i2c_addr: i2c address
+        :type i2c_addr: int
         :param register: Register to read
+        :type register: int
         :return: 2-byte word
         :rtype: int
         """
-        # type: (int, int) -> int
         self._set_address(i2c_addr)
         msg = i2c_smbus_ioctl_data.create(
             read_write=I2C_SMBUS_READ, command=register, size=I2C_SMBUS_WORD_DATA
@@ -376,10 +386,13 @@ class SMBus(object):
         Write a byte to a given register.
 
         :param i2c_addr: i2c address
+        :type i2c_addr: int
         :param register: Register to write to
+        :type register: int
         :param value: Word value to transmit
+        :type value: int
+        :rtype: None
         """
-        # type: (int, int, int) -> None
         self._set_address(i2c_addr)
         msg = i2c_smbus_ioctl_data.create(
             read_write=I2C_SMBUS_WRITE, command=register, size=I2C_SMBUS_WORD_DATA
@@ -392,12 +405,14 @@ class SMBus(object):
         Read a block of byte data from a given register.
 
         :param i2c_addr: i2c address
+        :type i2c_addr: int
         :param register: Start register
+        :type register: int
         :param length: Desired block length
+        :type length: int
         :return: List of bytes
         :rtype: list
         """
-        # type: (int, int, int) -> list
         if length > I2C_SMBUS_BLOCK_MAX:
             raise ValueError("Desired block length over %d bytes" % I2C_SMBUS_BLOCK_MAX)
         self._set_address(i2c_addr)
@@ -413,10 +428,13 @@ class SMBus(object):
         Write a block of byte data to a given register.
 
         :param i2c_addr: i2c address
+        :type i2c_addr: int
         :param register: Start register
+        :type register: int
         :param data: List of bytes
+        :type data: list
+        :rtype: None
         """
-        # type: (int, int, list) -> None
         length = len(data)
         if length > I2C_SMBUS_BLOCK_MAX:
             raise ValueError("Data length cannot exceed %d bytes" % I2C_SMBUS_BLOCK_MAX)
@@ -434,13 +452,12 @@ class SMBus(object):
         transaction (with repeted start bits but no stop bits in between).
 
         This method takes i2c_msg instances as input, which must be created
-        first with ``i2c_msg.create_read()`` or ``i2c_msg.create_write()``.
+        first with :py:meth:`i2c_msg.read` or :py:meth:`i2c_msg.write`.
 
-        :type i2c_msgs: i2c_msg
         :param i2c_msgs: One or more i2c_msg class instances.
-        :return: None
+        :type i2c_msgs: i2c_msg
+        :rtype: None
         """
-        # type: (i2c_msg) -> None
         ioctl_data = i2c_rdwr_ioctl_data.create(*i2c_msgs)
         ioctl(self.fd, I2C_RDWR, ioctl_data)
 
@@ -450,7 +467,8 @@ class SMBusWrapper:
     Wrapper class around the SMBus.
 
     Enables the user to wrap access to the :py:class:`SMBus` class in a
-    "with" statement. Will automatically close the :py:class:`SMBus` handle
+    "with" statement. If auto_cleanup is True (default), the
+    :py:class:`SMBus` handle will be automatically closed
     upon exit of the ``with`` block.
     """
     def __init__(self, bus_number=0, auto_cleanup=True, force=False):
