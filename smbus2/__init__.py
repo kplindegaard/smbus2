@@ -22,4 +22,4 @@
 
 from .smbus2 import SMBus, SMBusWrapper, i2c_msg  # noqa: F401
 
-__version__ = "0.2.0"
+__version__ = "0.2.1"
