@@ -137,15 +137,16 @@ class i2c_msg(Structure):
 
     def __iter__(self):
         return i2c_msg_iter(self)
-      
+
     def __len__(self):
         return self.len
-      
+
     def __bytes__(self):
         return string_at(self.buf, self.len)
-      
+
     def __repr__(self):
         return 'i2c_msg(%r)' % bytes(self)
+
     __str__ = __repr__
 
     @staticmethod
