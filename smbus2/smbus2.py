@@ -42,6 +42,7 @@ I2C_SMBUS_QUICK = 0
 I2C_SMBUS_BYTE = 1
 I2C_SMBUS_BYTE_DATA = 2
 I2C_SMBUS_WORD_DATA = 3
+I2C_SMBUS_PROC_CALL = 4
 I2C_SMBUS_BLOCK_DATA = 5  # Can't get this one to work on my Raspberry Pi
 I2C_SMBUS_I2C_BLOCK_DATA = 8
 I2C_SMBUS_BLOCK_MAX = 32
@@ -430,6 +431,28 @@ class SMBus(object):
         )
         msg.data.contents.word = value
         ioctl(self.fd, I2C_SMBUS, msg)
+
+    def process_call(self, i2c_addr, register, value, force=None):
+        """
+        Executes a SMBus Process Call, sending a 16-bit value and receiving a 16-bit response
+
+        :param i2c_addr: i2c address
+        :type i2c_addr: int
+        :param register: Register to read/write to
+        :type register: int
+        :param value: Word value to transmit
+        :type value: int
+        :param force:
+        :type force: Boolean
+        :rtype: int
+        """
+        self._set_address(i2c_addr, force=force)
+        msg = i2c_smbus_ioctl_data.create(
+            read_write=I2C_SMBUS_WRITE, command=register, size=I2C_SMBUS_PROC_CALL
+        )
+        msg.data.contents.word = value
+        ioctl(self.fd, I2C_SMBUS, msg)
+        return msg.data.contents.word
 
     def read_i2c_block_data(self, i2c_addr, register, length, force=None):
         """
