@@ -52,6 +52,7 @@ try:
 except:
     IntFlag = int
 
+
 class I2cFunc(IntFlag):
     I2C = 0x00000001
     ADDR_10BIT = 0x00000002
@@ -73,13 +74,14 @@ class I2cFunc(IntFlag):
     SMBUS_READ_I2C_BLOCK = 0x04000000  # I2C-like block xfer
     SMBUS_WRITE_I2C_BLOCK = 0x08000000  # w/ 1-byte reg. addr.
     SMBUS_HOST_NOTIFY = 0x10000000
-    
+
     SMBUS_BYTE = 0x00060000
     SMBUS_BYTE_DATA = 0x00180000
     SMBUS_WORD_DATA = 0x00600000
     SMBUS_BLOCK_DATA = 0x03000000
     SMBUS_I2C_BLOCK = 0x0c000000
     SMBUS_EMUL = 0x0eff0008
+
 
 # i2c_msg flags from uapi/linux/i2c.h
 I2C_M_RD = 0x0001
