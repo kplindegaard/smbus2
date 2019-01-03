@@ -140,6 +140,10 @@ class i2c_msg(Structure):
       
     def __bytes__(self):
         return string_at(self.buf, self.len)
+      
+    def __repr__(self):
+        return 'i2c_msg(%r)' % bytes(self)
+    __str__ = __repr__
 
     @staticmethod
     def read(address, length):
