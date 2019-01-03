@@ -24,6 +24,7 @@ Currently supported features are:
 * write_word_data
 * read_i2c_block_data
 * write_i2c_block_data
+* write_quick
 * i2c_rdwr - *combined write/read transactions with repeated start*
 
 It is developed on Python 2.7 but works without any modifications in Python 3.X too.

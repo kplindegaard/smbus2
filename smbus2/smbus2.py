@@ -38,6 +38,7 @@ I2C_SMBUS_WRITE = 0
 I2C_SMBUS_READ = 1
 
 # Size identifiers uapi/linux/i2c.h
+I2C_SMBUS_QUICK = 0
 I2C_SMBUS_BYTE = 1
 I2C_SMBUS_BYTE_DATA = 2
 I2C_SMBUS_WORD_DATA = 3
@@ -299,6 +300,19 @@ class SMBus(object):
         f = c_uint32()
         ioctl(self.fd, I2C_FUNCS, f)
         return f.value
+
+    def write_quick(self, i2c_addr, force=None):
+        """
+        Perform quick transaction. Throws IOError if unsuccessful.
+        :param i2c_addr: i2c address
+        :type i2c_addr: int
+        :param force:
+        :type force: Boolean
+        """
+        self._set_address(i2c_addr, force=force)
+        msg = i2c_smbus_ioctl_data.create(
+            read_write=I2C_SMBUS_WRITE, command=0, size=I2C_SMBUS_QUICK)
+        ioctl(self.fd, I2C_SMBUS, msg)
 
     def read_byte(self, i2c_addr, force=None):
         """
