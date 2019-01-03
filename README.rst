@@ -32,6 +32,7 @@ Currently supported features are:
 * write_word_data
 * read_i2c_block_data
 * write_i2c_block_data
+* write_quick
 * i2c_rdwr - *combined write/read transactions with repeated start*
 
 It is developed on Python 2.7 but works without any modifications in Python 3.X too.
@@ -115,7 +116,8 @@ I2C
 Starting with v0.2, the smbus2 library also has support for combined read and write transactions. *i2c_rdwr* is not really a SMBus feature but comes in handy when the master needs to:
 
 1. read or write bulks of data larger than SMBus' 32 bytes limit.
-1. write some data and then read from the slave with a repeated start and no stop bit between.
+
+2. write some data and then read from the slave with a repeated start and no stop bit between.
 
 Each operation is represented by a *i2c_msg* message object.
 

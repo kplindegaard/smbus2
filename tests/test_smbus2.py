@@ -33,7 +33,10 @@ except ImportError:
 
 # Required I2C constant definitions repeated
 I2C_SMBUS = 0x0720
+I2C_SMBUS_WRITE = 0
 I2C_SMBUS_READ = 1
+
+I2C_SMBUS_QUICK = 0
 I2C_SMBUS_BYTE_DATA = 2
 I2C_SMBUS_WORD_DATA = 3
 I2C_SMBUS_BLOCK_DATA = 5  # Can't get this one to work on my Raspberry Pi
@@ -70,6 +73,12 @@ def mock_ioctl(fd, command, msg):
         elif msg.size == I2C_SMBUS_I2C_BLOCK_DATA:
             for k in range(msg.data.contents.byte):
                 msg.data.contents.block[k + 1] = test_buffer[offset + k]
+
+    # Reproduce a failing Quick write transaction
+    if command == I2C_SMBUS and \
+            msg.read_write == I2C_SMBUS_WRITE and \
+            msg.size == I2C_SMBUS_QUICK:
+        raise IOError("Mocking SMBus Quick failed")
 
 
 # Override open, close and ioctl with our mock functions
@@ -117,6 +126,10 @@ class TestSMBus(unittest.TestCase):
         self.assertListEqual(res, res3, msg="Byte and block reads differ")
 
         bus.close()
+
+    def test_quick(self):
+        bus = SMBus(1)
+        self.assertRaises(IOError, bus.write_quick, 80)
 
 
 class TestSMBusWrapper(unittest.TestCase):
