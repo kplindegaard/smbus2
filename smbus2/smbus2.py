@@ -146,9 +146,13 @@ class i2c_msg(Structure):
         return string_at(self.buf, self.len)
 
     def __repr__(self):
-        return 'i2c_msg(%r)' % bytes(self)
+        return 'i2c_msg(%d,%d,%r)' % (self.addr, self.flags, self.__bytes__())
 
-    __str__ = __repr__
+    def __str__(self):
+        s = self.__bytes__()
+        if sys.version_info.major >= 3:
+            s = ''.join(map(chr, s))
+        return s
 
     @staticmethod
     def read(address, length):

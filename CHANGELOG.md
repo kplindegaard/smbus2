@@ -5,6 +5,7 @@ Notable changes to the smbus2 project are recorded here.
 ### Added
 - Missing SMBus commands added: `process_call`, `write_block_data`, `read_block_data`, `write_block_data`.
   Note that the latter two are normally not supported by pure i2c-devices. 
+- Added convenience features making the `i2c_msg` class easier to work with.
 
 ### Changed
 - Removed `__slots__` from `i2c_msg` class.
