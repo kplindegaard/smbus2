@@ -135,7 +135,6 @@ class i2c_msg(Structure):
         ('flags', c_uint16),
         ('len', c_uint16),
         ('buf', POINTER(c_char))]
-    __slots__ = [name for name, type in _fields_]
 
     def __iter__(self):
         return i2c_msg_iter(self)
@@ -582,7 +581,7 @@ class SMBus(object):
     def i2c_rdwr(self, *i2c_msgs):
         """
         Combine a series of i2c read and write operations in a single
-        transaction (with repeted start bits but no stop bits in between).
+        transaction (with repeated start bits but no stop bits in between).
 
         This method takes i2c_msg instances as input, which must be created
         first with :py:meth:`i2c_msg.read` or :py:meth:`i2c_msg.write`.
