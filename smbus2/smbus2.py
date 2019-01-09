@@ -23,7 +23,7 @@
 import os
 import sys
 from fcntl import ioctl
-from ctypes import c_uint32, c_uint8, c_uint16, c_char, POINTER, Structure, Array, Union, create_string_buffer
+from ctypes import c_uint32, c_uint8, c_uint16, c_char, POINTER, Structure, Array, Union, create_string_buffer, string_at
 
 
 # Commands from uapi/linux/i2c-dev.h
@@ -138,6 +138,17 @@ class i2c_msg(Structure):
 
     def __iter__(self):
         return i2c_msg_iter(self)
+
+    def __len__(self):
+        return self.len
+
+    def __bytes__(self):
+        return string_at(self.buf, self.len)
+
+    def __repr__(self):
+        return 'i2c_msg(%r)' % bytes(self)
+
+    __str__ = __repr__
 
     @staticmethod
     def read(address, length):
