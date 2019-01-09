@@ -42,7 +42,9 @@ I2C_SMBUS_QUICK = 0
 I2C_SMBUS_BYTE = 1
 I2C_SMBUS_BYTE_DATA = 2
 I2C_SMBUS_WORD_DATA = 3
-I2C_SMBUS_BLOCK_DATA = 5  # Can't get this one to work on my Raspberry Pi
+I2C_SMBUS_PROC_CALL = 4
+I2C_SMBUS_BLOCK_DATA = 5  # This isn't supported by Pure-I2C drivers with SMBUS emulation, like those in RaspberryPi, OrangePi, etc :(
+I2C_SMBUS_BLOCK_PROC_CALL = 7  # Like I2C_SMBUS_BLOCK_DATA, it isn't supported by Pure-I2C drivers either.
 I2C_SMBUS_I2C_BLOCK_DATA = 8
 I2C_SMBUS_BLOCK_MAX = 32
 
@@ -430,6 +432,102 @@ class SMBus(object):
         )
         msg.data.contents.word = value
         ioctl(self.fd, I2C_SMBUS, msg)
+
+    def process_call(self, i2c_addr, register, value, force=None):
+        """
+        Executes a SMBus Process Call, sending a 16-bit value and receiving a 16-bit response
+
+        :param i2c_addr: i2c address
+        :type i2c_addr: int
+        :param register: Register to read/write to
+        :type register: int
+        :param value: Word value to transmit
+        :type value: int
+        :param force:
+        :type force: Boolean
+        :rtype: int
+        """
+        self._set_address(i2c_addr, force=force)
+        msg = i2c_smbus_ioctl_data.create(
+            read_write=I2C_SMBUS_WRITE, command=register, size=I2C_SMBUS_PROC_CALL
+        )
+        msg.data.contents.word = value
+        ioctl(self.fd, I2C_SMBUS, msg)
+        return msg.data.contents.word
+
+    def read_block_data(self, i2c_addr, register, force=None):
+        """
+        Read a block of up to 32-bytes from a given register.
+
+        :param i2c_addr: i2c address
+        :type i2c_addr: int
+        :param register: Start register
+        :type register: int
+        :param force:
+        :type force: Boolean
+        :return: List of bytes
+        :rtype: list
+        """
+        self._set_address(i2c_addr, force=force)
+        msg = i2c_smbus_ioctl_data.create(
+            read_write=I2C_SMBUS_READ, command=register, size=I2C_SMBUS_BLOCK_DATA
+        )
+        ioctl(self.fd, I2C_SMBUS, msg)
+        length = msg.data.contents.block[0]
+        return msg.data.contents.block[1:length + 1]
+
+    def write_block_data(self, i2c_addr, register, data, force=None):
+        """
+        Write a block of byte data to a given register.
+
+        :param i2c_addr: i2c address
+        :type i2c_addr: int
+        :param register: Start register
+        :type register: int
+        :param data: List of bytes
+        :type data: list
+        :param force:
+        :type force: Boolean
+        :rtype: None
+        """
+        length = len(data)
+        if length > I2C_SMBUS_BLOCK_MAX:
+            raise ValueError("Data length cannot exceed %d bytes" % I2C_SMBUS_BLOCK_MAX)
+        self._set_address(i2c_addr, force=force)
+        msg = i2c_smbus_ioctl_data.create(
+            read_write=I2C_SMBUS_WRITE, command=register, size=I2C_SMBUS_BLOCK_DATA
+        )
+        msg.data.contents.block[0] = length
+        msg.data.contents.block[1:length + 1] = data
+        ioctl(self.fd, I2C_SMBUS, msg)
+
+    def block_process_call(self, i2c_addr, register, data, force=None):
+        """
+        Executes a SMBus Block Process Call, sending a variable-size data block and receiving another variable-size response
+
+        :param i2c_addr: i2c address
+        :type i2c_addr: int
+        :param register: Register to read/write to
+        :type register: int
+        :param data: List of bytes
+        :type data: list
+        :param force:
+        :type force: Boolean
+        :return: List of bytes
+        :rtype: list
+        """
+        length = len(data)
+        if length > I2C_SMBUS_BLOCK_MAX:
+            raise ValueError("Data length cannot exceed %d bytes" % I2C_SMBUS_BLOCK_MAX)
+        self._set_address(i2c_addr, force=force)
+        msg = i2c_smbus_ioctl_data.create(
+            read_write=I2C_SMBUS_WRITE, command=register, size=I2C_SMBUS_BLOCK_PROC_CALL
+        )
+        msg.data.contents.block[0] = length
+        msg.data.contents.block[1:length + 1] = data
+        ioctl(self.fd, I2C_SMBUS, msg)
+        length = msg.data.contents.block[0]
+        return msg.data.contents.block[1:length + 1]
 
     def read_i2c_block_data(self, i2c_addr, register, length, force=None):
         """
