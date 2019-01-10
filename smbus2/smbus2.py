@@ -185,7 +185,7 @@ class i2c_msg(Structure):
         """
         if sys.version_info.major >= 3:
             if type(buf) is str:
-                buf = bytes(buf, 'UTF-8')
+                buf = bytes(map(ord, buf))
             else:
                 buf = bytes(buf)
         else:
