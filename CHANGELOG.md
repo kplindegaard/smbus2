@@ -1,6 +1,10 @@
 # Changelog
 Notable changes to the smbus2 project are recorded here.
 
+## [0.2.3] - 2019-01-10
+### Fixed
+- Incorrect `i2c_msg` created in Python 3.x if str input contains ascii chars >= 128. 
+
 ## [0.2.2] - 2019-01-03
 ### Added
 - SMBus Quick command.
@@ -33,6 +37,7 @@ Notable changes to the smbus2 project are recorded here.
 First published version.
 
 
+[0.2.3]: https://github.com/kplindegaard/smbus2/compare/0.2.2...0.2.3
 [0.2.2]: https://github.com/kplindegaard/smbus2/compare/0.2.1...0.2.2
 [0.2.1]: https://github.com/kplindegaard/smbus2/compare/0.2.0...0.2.1
 [0.2.0]: https://github.com/kplindegaard/smbus2/compare/0.1.5...0.2.0
