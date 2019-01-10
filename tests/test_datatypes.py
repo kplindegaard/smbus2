@@ -22,7 +22,6 @@
 from smbus2.smbus2 import i2c_smbus_ioctl_data, union_i2c_smbus_data, i2c_msg, i2c_rdwr_ioctl_data  # noqa: F401
 from smbus2.smbus2 import I2C_SMBUS_BLOCK_MAX, I2C_SMBUS_READ, I2C_SMBUS_BYTE_DATA
 import unittest
-import sys
 
 
 class TestDataTypes(unittest.TestCase):
@@ -84,7 +83,6 @@ class TestDataTypes(unittest.TestCase):
         self.assertListEqual(list(msg), list(msg2))
         self.assertEqual(str(msg2)[0:4], "ABCD")
         self.assertGreaterEqual(('%r' % msg2).find(r"ABCD\x01\n\xff"), 0)
-
 
     def test_i2c_msg_iter(self):
         buf = [10, 11, 12, 13]
