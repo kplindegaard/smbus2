@@ -257,6 +257,14 @@ class SMBus(object):
         self.force = force
         self._force_last = None
 
+    def __enter__(self):
+        """Enter handler."""
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        """Exit handler."""
+        self.close()
+
     def open(self, bus):
         """
         Open a given i2c bus.
