@@ -256,9 +256,10 @@ class SMBus(object):
         """
         Initialize and (optionally) open an i2c bus connection.
 
-        :param bus: i2c bus number (e.g. 0 or 1). If not given, a subsequent
-            call to ``open()`` is required.
-        :type bus: int
+        :param bus: i2c bus number (e.g. 0 or 1)
+            or an absolute file path (e.g. `/dev/i2c-42`).
+            If not given, a subsequent  call to ``open()`` is required.
+        :type bus: int or str
         :param force: force using the slave address even when driver is
             already using it.
         :type force: boolean
@@ -276,9 +277,18 @@ class SMBus(object):
         Open a given i2c bus.
 
         :param bus: i2c bus number (e.g. 0 or 1)
-        :type bus: int
+            or an absolute file path (e.g. '/dev/i2c-42').
+        :type bus: int or str
+        :raise TypeError: if type(bus) is not in (int, str)
         """
-        self.fd = os.open("/dev/i2c-{}".format(bus), os.O_RDWR)
+        if isinstance(bus, int):
+            filepath = "/dev/i2c-{}".format(bus)
+        elif isinstance(bus, str):
+            filepath = bus
+        else:
+            raise TypeError("Unexpected type(bus)={}".format(type(bus)))
+
+        self.fd = os.open(filepath, os.O_RDWR)
         self.funcs = self._get_funcs()
 
     def close(self):
