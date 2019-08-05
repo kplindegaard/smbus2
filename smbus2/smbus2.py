@@ -137,7 +137,15 @@ class i2c_msg(Structure):
         ('buf', POINTER(c_char))]
 
     def __iter__(self):
-        return i2c_msg_iter(self)
+        """ Iterator / Generator
+
+        :return: iterates over :py:attr:`buf`
+        :rtype: :py:class:`generator` which returns int values
+        """
+        idx = 0
+        while idx < self.len:
+            yield ord(self.buf[idx])
+            idx += 1
 
     def __len__(self):
         return self.len
@@ -223,29 +231,6 @@ class i2c_rdwr_ioctl_data(Structure):
             nmsgs=n_msg
         )
 
-
-class i2c_msg_iter:
-    """
-    :py:class:`i2c_msg` iterator. For convenience.
-    """
-
-    def __init__(self, msg):
-        self.msg = msg
-        self.idx = 0
-
-    def __iter__(self):
-        return self
-
-    def __next__(self):
-        if self.idx < self.msg.len:
-            val = ord(self.msg.buf[self.idx])
-            self.idx += 1
-            return val
-        else:
-            raise StopIteration()
-
-    def next(self):
-        return self.__next__()
 
 #############################################################
 
