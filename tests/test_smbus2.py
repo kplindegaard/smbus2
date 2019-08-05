@@ -19,13 +19,15 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from smbus2 import SMBus, SMBusWrapper
+import sys
 import unittest
 
 try:
     import unittest.mock as mock
 except ImportError:
     import mock  # noqa: F401
+
+from smbus2 import SMBus, SMBusWrapper
 
 
 ##########################################################################
@@ -49,6 +51,14 @@ MOCK_FD = "Mock file descriptor"
 test_buffer = [x for x in range(256)]
 
 
+def bytes_six(lst):
+    """convert a list of int to `bytes` like object"""
+    if sys.version_info.major >= 3:
+        return bytes(lst)
+    else:
+        return ''.join(map(chr, lst))
+
+
 def mock_open(*args):
     print("Mocking open: %s" % args[0])
     return MOCK_FD
@@ -56,6 +66,11 @@ def mock_open(*args):
 
 def mock_close(*args):
     assert args[0] == MOCK_FD
+
+
+def mock_read(fd, length):
+    assert fd == MOCK_FD
+    return bytes_six(test_buffer[0:length])
 
 
 def mock_ioctl(fd, command, msg):
@@ -84,9 +99,11 @@ def mock_ioctl(fd, command, msg):
 # Override open, close and ioctl with our mock functions
 open_mock = mock.patch('smbus2.smbus2.os.open', mock_open)
 close_mock = mock.patch('smbus2.smbus2.os.close', mock_close)
+read_mock = mock.patch('smbus2.smbus2.os.read', mock_read)
 ioctl_mock = mock.patch('smbus2.smbus2.ioctl', mock_ioctl)
 open_mock.start()
 close_mock.start()
+read_mock.start()
 ioctl_mock.start()
 ##########################################################################
 
@@ -98,10 +115,32 @@ class TestSMBus(unittest.TestCase):
         print("\nSupported I2C functionality: %x" % bus.funcs)
         bus.close()
 
+    def test_enter_exit(self):
+        for id in (1, '/dev/i2c-alias'):
+            with SMBus(id) as bus:
+                self.assertIsNotNone(bus.fd)
+            self.assertIsNone(bus.fd, None)
+
+        with SMBus() as bus:
+            self.assertIsNone(bus.fd)
+            bus.open(2)
+            self.assertIsNotNone(bus.fd)
+        self.assertIsNone(bus.fd)
+
+    def test_open_close(self):
+        for id in (1, '/dev/i2c-alias'):
+            bus = SMBus()
+            self.assertIsNone(bus.fd)
+            bus.open(id)
+            self.assertIsNotNone(bus.fd)
+            bus.close()
+            self.assertIsNone(bus.fd)
+
     def test_read(self):
         res = []
         res2 = []
         res3 = []
+        res4 = bytes()
 
         bus = SMBus(1)
 
@@ -124,6 +163,13 @@ class TestSMBus(unittest.TestCase):
         res3.extend(x)
         self.assertEqual(len(res3), n, msg="Result array of incorrect length.")
         self.assertListEqual(res, res3, msg="Byte and block reads differ")
+
+        # Read block of N bytes
+        n = 2
+        x = bus.i2c_read(80, n)
+        res4 = x
+        self.assertEqual(len(res4), n, msg="Result bytes of incorrect length.")
+        self.assertEqual(bytes_six(res), res4, msg="Byte and block reads differ")
 
         bus.close()
 
