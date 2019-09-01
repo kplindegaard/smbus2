@@ -20,6 +20,6 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from .smbus2 import SMBus, SMBusWrapper, i2c_msg  # noqa: F401
+from .smbus2 import SMBus, SMBusWrapper, i2c_msg, I2cFunc  # noqa: F401
 
 __version__ = "0.2.2"

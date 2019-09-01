@@ -49,25 +49,49 @@ I2C_SMBUS_I2C_BLOCK_DATA = 8
 I2C_SMBUS_BLOCK_MAX = 32
 
 # To determine what functionality is present (uapi/linux/i2c.h)
-I2C_FUNC_I2C = 0x00000001
-I2C_FUNC_10BIT_ADDR = 0x00000002
-I2C_FUNC_PROTOCOL_MANGLING = 0x00000004  # I2C_M_IGNORE_NAK etc.
-I2C_FUNC_SMBUS_PEC = 0x00000008
-I2C_FUNC_NOSTART = 0x00000010  # I2C_M_NOSTART
-I2C_FUNC_SLAVE = 0x00000020
-I2C_FUNC_SMBUS_BLOCK_PROC_CALL = 0x00008000  # SMBus 2.0
-I2C_FUNC_SMBUS_QUICK = 0x00010000
-I2C_FUNC_SMBUS_READ_BYTE = 0x00020000
-I2C_FUNC_SMBUS_WRITE_BYTE = 0x00040000
-I2C_FUNC_SMBUS_READ_BYTE_DATA = 0x00080000
-I2C_FUNC_SMBUS_WRITE_BYTE_DATA = 0x00100000
-I2C_FUNC_SMBUS_READ_WORD_DATA = 0x00200000
-I2C_FUNC_SMBUS_WRITE_WORD_DATA = 0x00400000
-I2C_FUNC_SMBUS_PROC_CALL = 0x00800000
-I2C_FUNC_SMBUS_READ_BLOCK_DATA = 0x01000000
-I2C_FUNC_SMBUS_WRITE_BLOCK_DATA = 0x02000000
-I2C_FUNC_SMBUS_READ_I2C_BLOCK = 0x04000000  # I2C-like block xfer
-I2C_FUNC_SMBUS_WRITE_I2C_BLOCK = 0x08000000  # w/ 1-byte reg. addr.
+try:
+    from enum import IntFlag
+except:
+    IntFlag = int
+
+
+class I2cFunc(IntFlag):
+    """
+    These flags identify the operations supported by an I2C/SMBus device.
+
+    You can test these flags on your `smbus.funcs`
+
+    On newer python versions, I2cFunc is an IntFlag enum, but it
+    falls back to class with a bunch of int constants on older releases.
+    """
+    I2C = 0x00000001
+    ADDR_10BIT = 0x00000002
+    PROTOCOL_MANGLING = 0x00000004  # I2C_M_IGNORE_NAK etc.
+    SMBUS_PEC = 0x00000008
+    NOSTART = 0x00000010  # I2C_M_NOSTART
+    SLAVE = 0x00000020
+    SMBUS_BLOCK_PROC_CALL = 0x00008000  # SMBus 2.0
+    SMBUS_QUICK = 0x00010000
+    SMBUS_READ_BYTE = 0x00020000
+    SMBUS_WRITE_BYTE = 0x00040000
+    SMBUS_READ_BYTE_DATA = 0x00080000
+    SMBUS_WRITE_BYTE_DATA = 0x00100000
+    SMBUS_READ_WORD_DATA = 0x00200000
+    SMBUS_WRITE_WORD_DATA = 0x00400000
+    SMBUS_PROC_CALL = 0x00800000
+    SMBUS_READ_BLOCK_DATA = 0x01000000
+    SMBUS_WRITE_BLOCK_DATA = 0x02000000
+    SMBUS_READ_I2C_BLOCK = 0x04000000  # I2C-like block xfer
+    SMBUS_WRITE_I2C_BLOCK = 0x08000000  # w/ 1-byte reg. addr.
+    SMBUS_HOST_NOTIFY = 0x10000000
+
+    SMBUS_BYTE = 0x00060000
+    SMBUS_BYTE_DATA = 0x00180000
+    SMBUS_WORD_DATA = 0x00600000
+    SMBUS_BLOCK_DATA = 0x03000000
+    SMBUS_I2C_BLOCK = 0x0c000000
+    SMBUS_EMUL = 0x0eff0008
+
 
 # i2c_msg flags from uapi/linux/i2c.h
 I2C_M_RD = 0x0001
@@ -264,7 +288,7 @@ class SMBus(object):
         :type force: boolean
         """
         self.fd = None
-        self.funcs = 0
+        self.funcs = I2cFunc(0)
         if bus is not None:
             self.open(bus)
         self.address = None
@@ -279,7 +303,7 @@ class SMBus(object):
         :type bus: int
         """
         self.fd = os.open("/dev/i2c-{}".format(bus), os.O_RDWR)
-        self.funcs = self._get_funcs()
+        self.funcs = I2cFunc(self._get_funcs())
 
     def close(self):
         """
