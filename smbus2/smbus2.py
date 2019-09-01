@@ -544,7 +544,8 @@ class SMBus(object):
 
     def block_process_call(self, i2c_addr, register, data, force=None):
         """
-        Executes a SMBus Block Process Call, sending a variable-size data block and receiving another variable-size response
+        Executes a SMBus Block Process Call, sending a variable-size data
+        block and receiving another variable-size response
 
         :param i2c_addr: i2c address
         :type i2c_addr: int

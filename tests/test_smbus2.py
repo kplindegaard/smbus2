@@ -27,13 +27,14 @@ try:
 except ImportError:
     import mock  # noqa: F401
 
-from smbus2 import SMBus, i2c_msg
+from smbus2 import SMBus, i2c_msg, I2cFunc
 
 
 ##########################################################################
 # Mock open, close and ioctl so we can run our unit tests anywhere.
 
 # Required I2C constant definitions repeated
+I2C_FUNCS = 0x0705  # Get the adapter functionality mask
 I2C_SMBUS = 0x0720
 I2C_SMBUS_WRITE = 0
 I2C_SMBUS_READ = 1
@@ -77,6 +78,11 @@ def mock_ioctl(fd, command, msg):
     print("Mocking ioctl")
     assert fd == MOCK_FD
     assert command is not None
+
+    # Reproduce i2c capability of a Raspberry Pi 3
+    if command == I2C_FUNCS:
+        msg.value = 0xeff0009
+        return
 
     # Reproduce ioctl read operations
     if command == I2C_SMBUS and msg.read_write == I2C_SMBUS_READ:
@@ -138,7 +144,6 @@ class TestSMBus(unittest.TestCase):
         res = []
         res2 = []
         res3 = []
-        res4 = bytes()
 
         bus = SMBus(1)
 
@@ -174,7 +179,9 @@ class TestSMBusWrapper(unittest.TestCase):
 
     def test_func(self):
         with SMBus(1) as bus:
-            print("\nSupported I2C functionality: %x" % bus.funcs)
+            print("\nSupported I2C functionality: 0x%X" % bus.funcs)
+            self.assertTrue(bus.funcs & I2cFunc.I2C > 0)
+            self.assertTrue(bus.funcs & I2cFunc.SMBUS_QUICK > 0)
 
     def test_read(self):
         res = []
