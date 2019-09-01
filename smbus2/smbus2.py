@@ -635,47 +635,11 @@ class SMBus(object):
         ioctl_data = i2c_rdwr_ioctl_data.create(*i2c_msgs)
         ioctl(self.fd, I2C_RDWR, ioctl_data)
 
-    def i2c_write(self, i2c_addr, data, force=None):
-        """
-        Write a bunch of data bytes.
-        The length of `data` is not as limitated as in :meth:`i2c_rdwr` or :meth:`write_i2c_block_data`
-
-        :param int i2c_addr: i2c address
-        :param data: data to write
-        :type data: bytes or list of int
-        :param bool force:
-        :return: number of bytes written
-        :rtype: int
-        """
-        # convert list to bytes string
-        if sys.version_info.major >= 3:
-            if not isinstance(data, bytes):
-                data = bytes(data)
-        else:
-            if not isinstance(data, str):
-                data = ''.join(map(chr, data))
-
-        self._set_address(i2c_addr, force=force)
-        return os.write(self.fd, data)
-
-    def i2c_read(self, i2c_addr, length, force=None):
-        """
-        Read a bunch of data bytes.
-        The length is not as limitated as in :meth:`i2c_rdwr` or :meth:`read_i2c_block_data`
-
-        :param int i2c_addr: i2c address
-        :param int length: Desired block length
-        :param bool force:
-        :rtype: bytes
-        """
-        self._set_address(i2c_addr, force=force)
-        data = os.read(self.fd, length)
-        return data
-
 
 class SMBusWrapper:
     """
     Wrapper class around the SMBus.
+    Deprecated as of version 0.3.0. Please replace with :py:class:`SMBus`.
 
     Enables the user to wrap access to the :py:class:`SMBus` class in a
     "with" statement. If auto_cleanup is True (default), the

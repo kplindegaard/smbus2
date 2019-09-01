@@ -33,6 +33,10 @@ Currently supported features are:
 * read_i2c_block_data
 * write_i2c_block_data
 * write_quick
+* process_call
+* read_block_data
+* write_block_data
+* block_process_call
 * i2c_rdwr - *combined write/read transactions with repeated start*
 
 It is developed on Python 2.7 but works without any modifications in Python 3.X too.
@@ -62,9 +66,9 @@ This is the very same example but safer to use since the smbus will be closed au
 
 .. code:: python
 
-    from smbus2 import SMBusWrapper
+    from smbus2 import SMBus
 
-    with SMBusWrapper(1) as bus:
+    with SMBus(1) as bus:
         b = bus.read_byte_data(80, 0)
         print(b)
 
@@ -75,9 +79,9 @@ You can read up to 32 bytes at once.
 
 .. code:: python
 
-    from smbus2 import SMBusWrapper
+    from smbus2 import SMBus
 
-    with SMBusWrapper(1) as bus:
+    with SMBus(1) as bus:
         # Read a block of 16 bytes from address 80, offset 0
         block = bus.read_i2c_block_data(80, 0, 16)
         # Returned value is a list of 16 bytes
@@ -88,9 +92,9 @@ Example 3: Write a byte
 
 .. code:: python
 
-    from smbus2 import SMBusWrapper
+    from smbus2 import SMBus
 
-    with SMBusWrapper(1) as bus:
+    with SMBus(1) as bus:
         # Write a byte to address 80, offset 0
         data = 45
         bus.write_byte_data(80, 0, data)
@@ -102,9 +106,9 @@ It is possible to write 32 bytes at the time, but I have found that error-prone.
 
 .. code:: python
 
-    from smbus2 import SMBusWrapper
+    from smbus2 import SMBus
 
-    with SMBusWrapper(1) as bus:
+    with SMBus(1) as bus:
         # Write a block of 8 bytes to address 80 from offset 0
         data = [1, 2, 3, 4, 5, 6, 7, 8]
         bus.write_i2c_block_data(80, 0, data)
@@ -129,7 +133,7 @@ Example 5: Single i2c_rdwr
 
     from smbus2 import SMBus, ic_msg
 
-    with SMBusWrapper(1) as bus:
+    with SMBus(1) as bus:
         # Read 64 bytes from address 80
         msg = i2c_msg.read(80, 64)
         bus.i2c_rdwr(msg)
@@ -151,7 +155,7 @@ To perform dual operations just add more i2c_msg instances to the bus call:
     # Single transaction writing two bytes then read two at address 80
     write = i2c_msg.write(80, [40, 50])
     read = i2c_msg.read(80, 2)
-    with SMBusWrapper(1) as bus:
+    with SMBus(1) as bus:
         bus.i2c_rdwr(write, read)
 
 
@@ -163,7 +167,7 @@ All data is contained in the i2c_msg instances. Here are some data access altern
 .. code:: python
 
         # 1: Convert message content to list
-        msg = i2c.write(60, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+        msg = i2c_msg.write(60, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
         data = list(msg)  # data = [1, 2, 3, ...]
         print(len(data))  # => 10
 

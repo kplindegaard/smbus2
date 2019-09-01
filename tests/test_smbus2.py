@@ -27,7 +27,7 @@ try:
 except ImportError:
     import mock  # noqa: F401
 
-from smbus2 import SMBus, SMBusWrapper
+from smbus2 import SMBus, i2c_msg
 
 
 ##########################################################################
@@ -99,11 +99,9 @@ def mock_ioctl(fd, command, msg):
 # Override open, close and ioctl with our mock functions
 open_mock = mock.patch('smbus2.smbus2.os.open', mock_open)
 close_mock = mock.patch('smbus2.smbus2.os.close', mock_close)
-read_mock = mock.patch('smbus2.smbus2.os.read', mock_read)
 ioctl_mock = mock.patch('smbus2.smbus2.ioctl', mock_ioctl)
 open_mock.start()
 close_mock.start()
-read_mock.start()
 ioctl_mock.start()
 ##########################################################################
 
@@ -164,13 +162,6 @@ class TestSMBus(unittest.TestCase):
         self.assertEqual(len(res3), n, msg="Result array of incorrect length.")
         self.assertListEqual(res, res3, msg="Byte and block reads differ")
 
-        # Read block of N bytes
-        n = 2
-        x = bus.i2c_read(80, n)
-        res4 = x
-        self.assertEqual(len(res4), n, msg="Result bytes of incorrect length.")
-        self.assertEqual(bytes_six(res), res4, msg="Byte and block reads differ")
-
         bus.close()
 
     def test_quick(self):
@@ -182,7 +173,7 @@ class TestSMBusWrapper(unittest.TestCase):
     """Similar test as TestSMBus except it encapsulates it all access within "with" blocks."""
 
     def test_func(self):
-        with SMBusWrapper(1) as bus:
+        with SMBus(1) as bus:
             print("\nSupported I2C functionality: %x" % bus.funcs)
 
     def test_read(self):
@@ -191,14 +182,14 @@ class TestSMBusWrapper(unittest.TestCase):
         res3 = []
 
         # Read bytes
-        with SMBusWrapper(1) as bus:
+        with SMBus(1) as bus:
             for k in range(2):
                 x = bus.read_byte_data(80, k)
                 res.append(x)
         self.assertEqual(len(res), 2, msg="Result array of incorrect length.")
 
         # Read word
-        with SMBusWrapper(1) as bus:
+        with SMBus(1) as bus:
             x = bus.read_word_data(80, 0)
             res2.append(x & 255)
             res2.append(x / 256)
@@ -207,8 +198,34 @@ class TestSMBusWrapper(unittest.TestCase):
 
         # Read block of N bytes
         n = 2
-        with SMBusWrapper(1) as bus:
+        with SMBus(1) as bus:
             x = bus.read_i2c_block_data(80, 0, n)
             res3.extend(x)
         self.assertEqual(len(res3), n, msg="Result array of incorrect length.")
         self.assertListEqual(res, res3, msg="Byte and block reads differ")
+
+
+class TestI2CMsg(unittest.TestCase):
+    def test_i2c_msg(self):
+        # 1: Convert message content to list
+        msg = i2c_msg.write(60, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+        data = list(msg)  # data = [1, 2, 3, ...]
+        self.assertEqual(len(data), 10)
+
+        # 2: i2c_msg is iterable
+        k = 0
+        s = 0
+        for value in msg:
+            k += 1
+            s += value
+        self.assertEqual(k, 10, msg='Incorrect length')
+        self.assertEqual(s, 55, msg='Incorrect sum')
+
+        # 3: Through i2c_msg properties
+        k = 0
+        s = 0
+        for k in range(msg.len):
+            s += ord(msg.buf[k])
+            k += 1
+        self.assertEqual(k, 10, msg='Incorrect length')
+        self.assertEqual(s, 55, msg='Incorrect sum')
