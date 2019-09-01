@@ -161,7 +161,15 @@ class i2c_msg(Structure):
         ('buf', POINTER(c_char))]
 
     def __iter__(self):
-        return i2c_msg_iter(self)
+        """ Iterator / Generator
+
+        :return: iterates over :py:attr:`buf`
+        :rtype: :py:class:`generator` which returns int values
+        """
+        idx = 0
+        while idx < self.len:
+            yield ord(self.buf[idx])
+            idx += 1
 
     def __len__(self):
         return self.len
@@ -248,29 +256,6 @@ class i2c_rdwr_ioctl_data(Structure):
         )
 
 
-class i2c_msg_iter:
-    """
-    :py:class:`i2c_msg` iterator. For convenience.
-    """
-
-    def __init__(self, msg):
-        self.msg = msg
-        self.idx = 0
-
-    def __iter__(self):
-        return self
-
-    def __next__(self):
-        if self.idx < self.msg.len:
-            val = ord(self.msg.buf[self.idx])
-            self.idx += 1
-            return val
-        else:
-            raise StopIteration()
-
-    def next(self):
-        return self.__next__()
-
 #############################################################
 
 
@@ -280,9 +265,10 @@ class SMBus(object):
         """
         Initialize and (optionally) open an i2c bus connection.
 
-        :param bus: i2c bus number (e.g. 0 or 1). If not given, a subsequent
-            call to ``open()`` is required.
-        :type bus: int
+        :param bus: i2c bus number (e.g. 0 or 1)
+            or an absolute file path (e.g. `/dev/i2c-42`).
+            If not given, a subsequent  call to ``open()`` is required.
+        :type bus: int or str
         :param force: force using the slave address even when driver is
             already using it.
         :type force: boolean
@@ -295,15 +281,32 @@ class SMBus(object):
         self.force = force
         self._force_last = None
 
+    def __enter__(self):
+        """Enter handler."""
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        """Exit handler."""
+        self.close()
+
     def open(self, bus):
         """
         Open a given i2c bus.
 
         :param bus: i2c bus number (e.g. 0 or 1)
-        :type bus: int
+            or an absolute file path (e.g. '/dev/i2c-42').
+        :type bus: int or str
+        :raise TypeError: if type(bus) is not in (int, str)
         """
-        self.fd = os.open("/dev/i2c-{}".format(bus), os.O_RDWR)
-        self.funcs = I2cFunc(self._get_funcs())
+        if isinstance(bus, int):
+            filepath = "/dev/i2c-{}".format(bus)
+        elif isinstance(bus, str):
+            filepath = bus
+        else:
+            raise TypeError("Unexpected type(bus)={}".format(type(bus)))
+
+        self.fd = os.open(filepath, os.O_RDWR)
+        self.funcs = self._get_funcs()
 
     def close(self):
         """
@@ -631,6 +634,43 @@ class SMBus(object):
         """
         ioctl_data = i2c_rdwr_ioctl_data.create(*i2c_msgs)
         ioctl(self.fd, I2C_RDWR, ioctl_data)
+
+    def i2c_write(self, i2c_addr, data, force=None):
+        """
+        Write a bunch of data bytes.
+        The length of `data` is not as limitated as in :meth:`i2c_rdwr` or :meth:`write_i2c_block_data`
+
+        :param int i2c_addr: i2c address
+        :param data: data to write
+        :type data: bytes or list of int
+        :param bool force:
+        :return: number of bytes written
+        :rtype: int
+        """
+        # convert list to bytes string
+        if sys.version_info.major >= 3:
+            if not isinstance(data, bytes):
+                data = bytes(data)
+        else:
+            if not isinstance(data, str):
+                data = ''.join(map(chr, data))
+
+        self._set_address(i2c_addr, force=force)
+        return os.write(self.fd, data)
+
+    def i2c_read(self, i2c_addr, length, force=None):
+        """
+        Read a bunch of data bytes.
+        The length is not as limitated as in :meth:`i2c_rdwr` or :meth:`read_i2c_block_data`
+
+        :param int i2c_addr: i2c address
+        :param int length: Desired block length
+        :param bool force:
+        :rtype: bytes
+        """
+        self._set_address(i2c_addr, force=force)
+        data = os.read(self.fd, length)
+        return data
 
 
 class SMBusWrapper:
