@@ -11,6 +11,8 @@ A drop-in replacement for smbus-cffi/smbus-python in pure Python
      :target: http://smbus2.readthedocs.io/en/latest/?badge=latest
      :alt: Documentation Status
 
+.. image:: https://img.shields.io/pypi/dm/smbus2?label=PyPI%20Downloads
+
 Introduction
 ============
 

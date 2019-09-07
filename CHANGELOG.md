@@ -2,13 +2,19 @@
 Notable changes to the smbus2 project are recorded here.
 
 ## [Unreleased]
+- No unreleased features.
+
+## [0.3.0] - 2019-09-07
 ### Added
 - Missing SMBus commands added: `process_call`, `write_block_data`, `read_block_data`, `block_process_call`.
   Note that the latter two are normally not supported by pure i2c-devices.
 - SMBus.__init__(), SMBus.open(): `bus` can be a file path as well (issue #17).
-- Added enter/exit handler to `SMBus` class. `SMBusWrapper` is not considered deprecated.
+- Added enter/exit handler to `SMBus` class.
 - Expose enumeration of i2c funcs. Previously, smbus.funcs was defined, but its flags were not exported. All flags moved into the `I2cFunc` class and exported that.
 - Added convenience features making the `i2c_msg` class easier to work with.
+
+### Deprecation warning
+- The `SMBusWrapper` class is now considered deprecated. Please replace with `SMBus`.
 
 ### Changed
 - Removed `__slots__` from `i2c_msg` class.
@@ -51,7 +57,8 @@ Notable changes to the smbus2 project are recorded here.
 First published version.
 
 
-[Unreleased]: https://github.com/kplindegaard/smbus2/compare/0.2.3...HEAD
+[Unreleased]: https://github.com/kplindegaard/smbus2/compare/0.3.0...HEAD
+[0.3.0]: https://github.com/kplindegaard/smbus2/compare/0.2.3...0.3.0
 [0.2.3]: https://github.com/kplindegaard/smbus2/compare/0.2.2...0.2.3
 [0.2.2]: https://github.com/kplindegaard/smbus2/compare/0.2.1...0.2.2
 [0.2.1]: https://github.com/kplindegaard/smbus2/compare/0.2.0...0.2.1
