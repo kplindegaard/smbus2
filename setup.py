@@ -41,6 +41,7 @@ setup(
     keywords=['smbus', 'smbus2', 'python', 'i2c', 'raspberrypi', 'linux'],
     url="https://github.com/kplindegaard/smbus2",
     packages=['smbus2'],
+    package_data={'smbus2': ['py.typed', 'smbus2.pyi']},
     long_description=README,
     extras_require={
         'docs': [
