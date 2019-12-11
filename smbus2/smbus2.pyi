@@ -50,9 +50,9 @@ class I2cFunc(IntFlag):
     SMBUS_EMUL = ...
 
 I2C_M_RD: int
-LP_c_uint8: pointer[c_uint8]
-LP_c_uint16: pointer[c_uint16]
-LP_c_uint32: pointer[c_uint32]
+LP_c_uint8: Type[pointer[c_uint8]]
+LP_c_uint16: Type[pointer[c_uint16]]
+LP_c_uint32: Type[pointer[c_uint32]]
 
 class i2c_smbus_data(Array): ...
 class union_i2c_smbus_data(Union): ...
