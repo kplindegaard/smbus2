@@ -1,5 +1,5 @@
 from enum import IntFlag
-from typing import Any, Optional, Sequence, List, Type
+from typing import Optional, Sequence, List, Type, SupportsBytes, Iterable
 from typing import Union as _UnionT
 from types import TracebackType
 from ctypes import c_uint32, c_uint8, c_uint16, pointer, Structure, Array, Union
@@ -72,7 +72,7 @@ class i2c_msg(Structure):
     @staticmethod
     def read(address: int, length: int) -> "i2c_msg": ...
     @staticmethod
-    def write(address: int, buf: list) -> "i2c_msg": ...
+    def write(address: int, buf: _UnionT[str, Iterable[int], SupportsBytes]) -> "i2c_msg": ...
 
 class i2c_rdwr_ioctl_data(Structure):
     @staticmethod
