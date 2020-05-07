@@ -182,8 +182,8 @@ class i2c_msg(Structure):
 
     def __str__(self):
         s = self.__bytes__()
-        if sys.version_info.major >= 3:
-            s = ''.join(map(chr, s))
+        # Throw away non-decodable bytes
+        s = s.decode(errors="ignore")
         return s
 
     @staticmethod
