@@ -125,7 +125,7 @@ Starting with v0.2, the smbus2 library also has support for combined read and wr
 
 2. write some data and then read from the slave with a repeated start and no stop bit between.
 
-Each operation is represented by a *i2c_msg* message object. For i2c_msg.write(), 
+Each operation is represented by a *i2c_msg* message object.
 
 
 Example 5: Single i2c_rdwr
