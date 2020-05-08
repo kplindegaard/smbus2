@@ -109,6 +109,10 @@ Each operation is represented by a *i2c_msg* message object.
         msg = i2c_msg.read(80, 64)
         bus.i2c_rdwr(msg)
         
+        # Write a single byte to address 80
+        msg = i2c_msg.write(80, [65])
+        bus.i2c_rdwr(msg)
+        
         # Write some bytes to address 80
         msg = i2c_msg.write(80, [65, 66, 67, 68])
         bus.i2c_rdwr(msg)
