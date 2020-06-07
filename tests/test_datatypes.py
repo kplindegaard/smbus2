@@ -81,7 +81,7 @@ class TestDataTypes(unittest.TestCase):
         self.assertEqual(msg2.len, msg.len)
         self.assertEqual(msg2.flags, msg.flags)
         self.assertListEqual(list(msg), list(msg2))
-        self.assertEqual(str(msg2)[0:4], "ABCD")
+        self.assertEqual(str(msg2), "ABCD\x01\n")
         self.assertGreaterEqual(('%r' % msg2).find(r"ABCD\x01\n\xff"), 0)
 
     def test_i2c_msg_iter(self):
