@@ -2,7 +2,7 @@
 Notable changes to the smbus2 project are recorded here.
 
 ## [Unreleased]
-- No unreleased features.
+- Added Python 3.8 to Travis-CI build config.
 
 ## [0.3.0] - 2019-09-07
 ### Added
