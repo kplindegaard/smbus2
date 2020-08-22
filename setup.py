@@ -24,7 +24,7 @@ def find_version(*file_paths):
     raise RuntimeError(err_msg)
 
 
-README = read_file('README.rst')
+README = read_file('README.md')
 version = find_version('smbus2', '__init__.py')
 test_deps = [
     'mock;python_version<"3.3"',
@@ -42,6 +42,7 @@ setup(
     url="https://github.com/kplindegaard/smbus2",
     packages=['smbus2'],
     long_description=README,
+    long_description_content_type="text/markdown",
     extras_require={
         'docs': [
             'sphinx >= 1.5.3'

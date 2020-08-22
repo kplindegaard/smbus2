@@ -3,6 +3,9 @@ Notable changes to the smbus2 project are recorded here.
 
 ## [Unreleased]
 - Added Python 3.8 to Travis-CI build config.
+- Cleaner docs:
+   - Removed redundant `README.rst`.
+   - `README.md`, `CHANGELOG.md` and `LICENSE` added to dist package.
 
 ## [0.3.0] - 2019-09-07
 ### Added
