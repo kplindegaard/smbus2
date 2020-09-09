@@ -330,7 +330,7 @@ class SMBus(object):
         if not (self.funcs & I2cFunc.SMBUS_PEC):
             raise IOError('SMBUS_PEC is not a feature')
 
-        ioctl(self.fd,I2C_PEC,int(enable))          
+        ioctl(self.fd, I2C_PEC, int(enable))          
 
     pec=property(None, enable_pec) # Drop-in replacement for smbus member "pec"
         
