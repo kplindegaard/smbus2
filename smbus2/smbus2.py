@@ -321,14 +321,19 @@ class SMBus(object):
         """
         Enable/Disable PEC (Packet Error Checking) - SMBus 1.1 and later
         
-        Contributed by Riccardo Gusmeroli 2020
+        Contributed by Riccardo Gusmeroli (2020)
+        
+        :param enable:
+        :type enable: Boolean
         """
 
         if not (self.funcs & I2cFunc.SMBUS_PEC):
-            raise ValueError('SMBUS_PEC is not a feature')
+            raise IOError('SMBUS_PEC is not a feature')
 
         ioctl(self.fd,I2C_PEC,int(enable))          
-            
+
+    pec=property(None, enable_pec) # Drop-in replacement for smbus member "pec"
+        
     def _set_address(self, address, force=None):
         """
         Set i2c slave address to use for subsequent calls.
