@@ -2,6 +2,7 @@
 Notable changes to the smbus2 project are recorded here.
 
 ## [Unreleased]
+- Support for Python 3 type hinting and mypy static type analysis. Type stubs added to the project.
 - Added Python 3.8 to Travis-CI build config.
 - Cleaner docs:
    - Removed redundant `README.rst`.
