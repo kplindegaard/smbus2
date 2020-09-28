@@ -636,6 +636,15 @@ class SMBus(object):
         ioctl_data = i2c_rdwr_ioctl_data.create(*i2c_msgs)
         ioctl(self.fd, I2C_RDWR, ioctl_data)
 
+    def read(self, address, length):
+        msg = i2c_msg.read(address, length)
+        self.i2c_rdwr(msg)
+        return list(msg)
+
+    def write(self, address, buf):
+        msg = i2c_msg.write(address, buf)
+        self.i2c_rdwr(msg)
+
 
 class SMBusWrapper:
     """
