@@ -335,6 +335,7 @@ class SMBus(object):
         ioctl(self.fd, I2C_PEC, self._pec)
 
     pec = property(_get_pec, enable_pec)  # Drop-in replacement for smbus member "pec"
+    """Get and set SMBus PEC. 0 = disabled (default), 1 = enabled."""
 
     def _set_address(self, address, force=None):
         """
