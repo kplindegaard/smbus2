@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # The MIT License (MIT)
-# Copyright (c) 2017 Karl-Petter Lindegaard
+# Copyright (c) 2020 Karl-Petter Lindegaard
 #
 # smbus2 documentation build configuration file.
 #

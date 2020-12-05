@@ -3,6 +3,9 @@ A drop-in replacement for smbus-cffi/smbus-python in pure Python
 
 [![Build Status](https://travis-ci.org/kplindegaard/smbus2.svg?branch=master)](https://travis-ci.org/kplindegaard/smbus2) 
 [![Documentation Status](https://readthedocs.org/projects/smbus2/badge/?version=latest)](http://smbus2.readthedocs.io/en/latest/?badge=latest)
+
+![Python Verions](https://img.shields.io/pypi/pyversions/smbus2.svg)
+[![PyPi Version](https://img.shields.io/pypi/v/smbus2.svg)](https://pypi.org/project/smbus2/)
 [![PyPI - Downloads](https://img.shields.io/pypi/dm/smbus2)](https://pypi.org/project/smbus2/)
 
 # Introduction
@@ -17,6 +20,7 @@ It was designed from the ground up with two goals in mind:
 Currently supported features are:
 
 * Get i2c capabilities (I2C_FUNCS)
+* SMBus Packet Error Checking (PEC) support
 * read_byte
 * write_byte
 * read_byte_data
@@ -33,6 +37,8 @@ Currently supported features are:
 * i2c_rdwr - *combined write/read transactions with repeated start*
 
 It is developed on Python 2.7 but works without any modifications in Python 3.X too.
+
+More information about updates and general changes are recorded in the [change log](https://github.com/kplindegaard/smbus2/blob/master/CHANGELOG.md).
 
 # SMBus code examples
 
@@ -55,6 +61,17 @@ This is the very same example but safer to use since the smbus will be closed au
     from smbus2 import SMBus
     
     with SMBus(1) as bus:
+        b = bus.read_byte_data(80, 0)
+        print(b)
+
+## Example 1c: Read a byte with PEC enabled
+
+Same example with Packet Error Checking enabled.
+
+    from smbus2 import SMBus
+
+    with SMBus(1) as bus:
+        bus.pec = 1  # Enable PEC
         b = bus.read_byte_data(80, 0)
         print(b)
 
@@ -149,10 +166,14 @@ All data is contained in the i2c_msg instances. Here are some data access altern
 
 # Installation instructions
 
-smbus2 is pure Python code and requires no compilation. Installation is easy:
-
-    python setup.py install
-    
-Or just use pip
+From PyPi with `pip`:
 
     pip install smbus2
+
+From conda-forge using `conda`:
+
+    conda install -c conda-forge smbus2
+
+Installation from source code is straight forward:
+
+    python setup.py install
