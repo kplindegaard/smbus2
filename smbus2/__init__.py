@@ -1,6 +1,6 @@
 """smbus2 - A drop-in replacement for smbus-cffi/smbus-python"""
 # The MIT License (MIT)
-# Copyright (c) 2017 Karl-Petter Lindegaard
+# Copyright (c) 2020 Karl-Petter Lindegaard
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -20,6 +20,6 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from .smbus2 import SMBus, SMBusWrapper, i2c_msg, I2cFunc  # noqa: F401
+from .smbus2 import SMBus, i2c_msg, I2cFunc  # noqa: F401
 
-__version__ = "0.3.0"
+__version__ = "0.4.0"

@@ -1,6 +1,6 @@
 """smbus2 - A drop-in replacement for smbus-cffi/smbus-python"""
 # The MIT License (MIT)
-# Copyright (c) 2017 Karl-Petter Lindegaard
+# Copyright (c) 2020 Karl-Petter Lindegaard
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -655,33 +655,3 @@ class SMBus(object):
         """
         ioctl_data = i2c_rdwr_ioctl_data.create(*i2c_msgs)
         ioctl(self.fd, I2C_RDWR, ioctl_data)
-
-
-class SMBusWrapper:
-    """
-    Wrapper class around the SMBus.
-    Deprecated as of version 0.3.0. Please replace with :py:class:`SMBus`.
-
-    Enables the user to wrap access to the :py:class:`SMBus` class in a
-    "with" statement. If auto_cleanup is True (default), the
-    :py:class:`SMBus` handle will be automatically closed
-    upon exit of the ``with`` block.
-    """
-    def __init__(self, bus_number=0, auto_cleanup=True, force=False):
-        """
-        :param auto_cleanup: Close bus when leaving scope.
-        :type auto_cleanup: Boolean
-        :param force: Force using the slave address even when driver is already using it.
-        :type force: Boolean
-        """
-        self.bus_number = bus_number
-        self.auto_cleanup = auto_cleanup
-        self.force = force
-
-    def __enter__(self):
-        self.bus = SMBus(bus=self.bus_number, force=self.force)
-        return self.bus
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        if self.auto_cleanup:
-            self.bus.close()

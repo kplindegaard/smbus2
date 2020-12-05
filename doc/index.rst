@@ -10,6 +10,6 @@ smbus2
    :target: https://pypi.python.org/pypi/smbus2
 
 .. automodule:: smbus2
-    :members: SMBus, SMBusWrapper, i2c_msg
+    :members: SMBus, i2c_msg
     :undoc-members:
 

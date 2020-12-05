@@ -34,6 +34,8 @@ Currently supported features are:
 
 It is developed on Python 2.7 but works without any modifications in Python 3.X too.
 
+More information about updates and general changes are recorded in the [change log](https://github.com/kplindegaard/smbus2/blob/master/CHANGELOG.md).
+
 # SMBus code examples
 
 smbus2 installs next to smbus as the package, so it's not really a 100% replacement. You must change the module name.

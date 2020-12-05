@@ -2,8 +2,27 @@
 Notable changes to the smbus2 project are recorded here.
 
 ## [Unreleased]
+
+## [0.4.0] - 2020-12-05
+### Added
+- Support for SMBus PEC (Packet Error Checking).
 - Support for Python 3 type hinting and mypy static type analysis. Type stubs added to the project.
-- Added Python 3.8 to Travis-CI build config.
+
+### Removed
+As of this version the `SMBusWrapper` class is removed and must be replaced with `SMBus`:
+
+```python
+# No longer valid!
+with SMBusWrapper(1) as bus:
+    ...
+
+# Replace with
+with SMBus(1) as bus:
+    ...
+```
+
+### General
+- Added Python 3.8 and 3.9 to Travis-CI build config.
 - Cleaner docs:
    - Removed redundant `README.rst`.
    - `README.md`, `CHANGELOG.md` and `LICENSE` added to dist package.
@@ -61,7 +80,8 @@ Notable changes to the smbus2 project are recorded here.
 First published version.
 
 
-[Unreleased]: https://github.com/kplindegaard/smbus2/compare/0.3.0...HEAD
+[Unreleased]: https://github.com/kplindegaard/smbus2/compare/0.4.0...HEAD
+[0.4.0]: https://github.com/kplindegaard/smbus2/compare/0.3.0...0.4.0
 [0.3.0]: https://github.com/kplindegaard/smbus2/compare/0.2.3...0.3.0
 [0.2.3]: https://github.com/kplindegaard/smbus2/compare/0.2.2...0.2.3
 [0.2.2]: https://github.com/kplindegaard/smbus2/compare/0.2.1...0.2.2
