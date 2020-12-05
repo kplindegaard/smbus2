@@ -32,7 +32,7 @@ I2C_SLAVE_FORCE = 0x0706  # Use this slave address, even if it is already in use
 I2C_FUNCS = 0x0705  # Get the adapter functionality mask
 I2C_RDWR = 0x0707  # Combined R/W transfer (one STOP only)
 I2C_SMBUS = 0x0720  # SMBus transfer. Takes pointer to i2c_smbus_ioctl_data
-I2C_PEC = 0x0708 # != 0 to use PEC with SMBus 
+I2C_PEC = 0x0708  # != 0 to use PEC with SMBus
 
 # SMBus transfer read or write markers from uapi/linux/i2c.h
 I2C_SMBUS_WRITE = 0
@@ -281,6 +281,7 @@ class SMBus(object):
         self.address = None
         self.force = force
         self._force_last = None
+        self._pec = 0
 
     def __enter__(self):
         """Enter handler."""
@@ -316,24 +317,25 @@ class SMBus(object):
         if self.fd:
             os.close(self.fd)
             self.fd = None
+            self._pec = 0
+
+    def _get_pec(self):
+        return self._pec
 
     def enable_pec(self, enable=True):
         """
         Enable/Disable PEC (Packet Error Checking) - SMBus 1.1 and later
-        
-        Contributed by Riccardo Gusmeroli (2020)
-        
+
         :param enable:
         :type enable: Boolean
         """
-
         if not (self.funcs & I2cFunc.SMBUS_PEC):
             raise IOError('SMBUS_PEC is not a feature')
+        self._pec = int(enable)
+        ioctl(self.fd, I2C_PEC, self._pec)
 
-        ioctl(self.fd, I2C_PEC, int(enable))          
+    pec = property(_get_pec, enable_pec)  # Drop-in replacement for smbus member "pec"
 
-    pec=property(None, enable_pec) # Drop-in replacement for smbus member "pec"
-        
     def _set_address(self, address, force=None):
         """
         Set i2c slave address to use for subsequent calls.

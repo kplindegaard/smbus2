@@ -79,9 +79,9 @@ def mock_ioctl(fd, command, msg):
     assert fd == MOCK_FD
     assert command is not None
 
-    # Reproduce i2c capability of a Raspberry Pi 3
+    # Reproduce i2c capability of a Raspberry Pi 3 w/o PEC support
     if command == I2C_FUNCS:
-        msg.value = 0xeff0009
+        msg.value = 0xeff0001
         return
 
     # Reproduce ioctl read operations
@@ -172,6 +172,22 @@ class TestSMBus(unittest.TestCase):
     def test_quick(self):
         bus = SMBus(1)
         self.assertRaises(IOError, bus.write_quick, 80)
+
+    def test_pec(self):
+        def set_pec(bus, enable=True):
+            bus.pec = enable
+
+        # Enabling PEC should fail (no mocked PEC support)
+        bus = SMBus(1)
+        self.assertRaises(IOError, set_pec, bus, True)
+        self.assertRaises(IOError, set_pec, bus, 1)
+        self.assertEquals(bus.pec, 0)
+
+        # Ensure PEC status is reset by close()
+        bus._pec = 1
+        self.assertEquals(bus.pec, 1)
+        bus.close()
+        self.assertEquals(bus.pec, 0)
 
 
 class TestSMBusWrapper(unittest.TestCase):
