@@ -111,6 +111,8 @@ close_mock.start()
 ioctl_mock.start()
 ##########################################################################
 
+# Common error messages
+INCORRECT_LENGTH_MSG = "Result array of incorrect length."
 
 # Test cases
 class TestSMBus(unittest.TestCase):
@@ -151,20 +153,20 @@ class TestSMBus(unittest.TestCase):
         for k in range(2):
             x = bus.read_byte_data(80, k)
             res.append(x)
-        self.assertEqual(len(res), 2, msg="Result array of incorrect length.")
+        self.assertEqual(len(res), 2, msg=INCORRECT_LENGTH_MSG)
 
         # Read word
         x = bus.read_word_data(80, 0)
         res2.append(x & 255)
         res2.append(x / 256)
-        self.assertEqual(len(res2), 2, msg="Result array of incorrect length.")
+        self.assertEqual(len(res2), 2, msg=INCORRECT_LENGTH_MSG)
         self.assertListEqual(res, res2, msg="Byte and word reads differ")
 
         # Read block of N bytes
         n = 2
         x = bus.read_i2c_block_data(80, 0, n)
         res3.extend(x)
-        self.assertEqual(len(res3), n, msg="Result array of incorrect length.")
+        self.assertEqual(len(res3), n, msg=INCORRECT_LENGTH_MSG)
         self.assertListEqual(res, res3, msg="Byte and block reads differ")
 
         bus.close()
@@ -209,14 +211,14 @@ class TestSMBusWrapper(unittest.TestCase):
             for k in range(2):
                 x = bus.read_byte_data(80, k)
                 res.append(x)
-        self.assertEqual(len(res), 2, msg="Result array of incorrect length.")
+        self.assertEqual(len(res), 2, msg=INCORRECT_LENGTH_MSG)
 
         # Read word
         with SMBus(1) as bus:
             x = bus.read_word_data(80, 0)
             res2.append(x & 255)
             res2.append(x / 256)
-        self.assertEqual(len(res2), 2, msg="Result array of incorrect length.")
+        self.assertEqual(len(res2), 2, msg=INCORRECT_LENGTH_MSG)
         self.assertListEqual(res, res2, msg="Byte and word reads differ")
 
         # Read block of N bytes
@@ -224,7 +226,7 @@ class TestSMBusWrapper(unittest.TestCase):
         with SMBus(1) as bus:
             x = bus.read_i2c_block_data(80, 0, n)
             res3.extend(x)
-        self.assertEqual(len(res3), n, msg="Result array of incorrect length.")
+        self.assertEqual(len(res3), n, msg=INCORRECT_LENGTH_MSG)
         self.assertListEqual(res, res3, msg="Byte and block reads differ")
 
 
@@ -232,7 +234,7 @@ class TestI2CMsg(unittest.TestCase):
     def test_i2c_msg(self):
         # 1: Convert message content to list
         msg = i2c_msg.write(60, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
-        data = list(msg)  # data = [1, 2, 3, ...]
+        data = list(msg)
         self.assertEqual(len(data), 10)
 
         # 2: i2c_msg is iterable
