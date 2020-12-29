@@ -3,6 +3,7 @@ A drop-in replacement for smbus-cffi/smbus-python in pure Python
 
 [![Build Status](https://travis-ci.org/kplindegaard/smbus2.svg?branch=master)](https://travis-ci.org/kplindegaard/smbus2) 
 [![Documentation Status](https://readthedocs.org/projects/smbus2/badge/?version=latest)](http://smbus2.readthedocs.io/en/latest/?badge=latest)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=kplindegaard_smbus2&metric=alert_status)](https://sonarcloud.io/dashboard?id=kplindegaard_smbus2)
 
 ![Python Verions](https://img.shields.io/pypi/pyversions/smbus2.svg)
 [![PyPi Version](https://img.shields.io/pypi/v/smbus2.svg)](https://pypi.org/project/smbus2/)
