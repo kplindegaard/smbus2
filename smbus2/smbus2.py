@@ -52,7 +52,7 @@ I2C_SMBUS_BLOCK_MAX = 32
 # To determine what functionality is present (uapi/linux/i2c.h)
 try:
     from enum import IntFlag
-except:
+except ImportError:
     IntFlag = int
 
 
