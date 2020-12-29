@@ -114,6 +114,7 @@ ioctl_mock.start()
 # Common error messages
 INCORRECT_LENGTH_MSG = "Result array of incorrect length."
 
+
 # Test cases
 class TestSMBus(unittest.TestCase):
     def test_func(self):
