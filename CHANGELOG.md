@@ -4,6 +4,7 @@ Notable changes to the smbus2 project are recorded here.
 ## [Unreleased]
 ###
 - SonarCloud quality checks
+- Tests added to the dist package.
 
 ## [0.4.0] - 2020-12-05
 ### Added
