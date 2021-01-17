@@ -2,8 +2,11 @@
 Notable changes to the smbus2 project are recorded here.
 
 ## [Unreleased]
-###
-- SonarCloud quality checks
+No unreleased updates.
+
+## [0.4.1] - 2021-01-17
+### General
+- SonarCloud quality checks.
 - Tests added to the dist package.
 
 ## [0.4.0] - 2020-12-05
@@ -83,7 +86,8 @@ with SMBus(1) as bus:
 First published version.
 
 
-[Unreleased]: https://github.com/kplindegaard/smbus2/compare/0.4.0...HEAD
+[Unreleased]: https://github.com/kplindegaard/smbus2/compare/0.4.1...HEAD
+[0.4.1]: https://github.com/kplindegaard/smbus2/compare/0.4.0...0.4.1
 [0.4.0]: https://github.com/kplindegaard/smbus2/compare/0.3.0...0.4.0
 [0.3.0]: https://github.com/kplindegaard/smbus2/compare/0.2.3...0.3.0
 [0.2.3]: https://github.com/kplindegaard/smbus2/compare/0.2.2...0.2.3
