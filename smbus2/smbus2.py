@@ -476,7 +476,7 @@ class SMBus(object):
 
     def write_word_data(self, i2c_addr, register, value, force=None):
         """
-        Write a byte to a given register.
+        Write a single word (2 bytes) to a given register.
 
         :param i2c_addr: i2c address
         :type i2c_addr: int
