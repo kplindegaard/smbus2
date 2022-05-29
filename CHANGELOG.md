@@ -2,7 +2,9 @@
 Notable changes to the smbus2 project are recorded here.
 
 ## [Unreleased]
-No unreleased updates.
+### General 
+- Explicitly export from top level of package [#69](https://github.com/kplindegaard/smbus2/pull/69)
+- Python 3.10 added to Travis-CI build config.
 
 ## [0.4.1] - 2021-01-17
 ### General
