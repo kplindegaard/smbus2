@@ -1,7 +1,7 @@
 smbus2
 ======
-.. image:: https://travis-ci.org/kplindegaard/smbus2.svg?branch=master
-   :target: https://travis-ci.org/kplindegaard/smbus2
+.. image:: https://github.com/kplindegaard/smbus2/actions/workflows/python-build-test.yml/badge.svg?branch=master
+   :target: https://github.com/kplindegaard/smbus2/actions/workflows/python-build-test.yml
 
 .. image:: https://img.shields.io/pypi/pyversions/smbus2.svg
     :target: https://pypi.python.org/pypi/smbus2
@@ -12,4 +12,3 @@ smbus2
 .. automodule:: smbus2
     :members: SMBus, i2c_msg
     :undoc-members:
-
