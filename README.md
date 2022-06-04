@@ -1,7 +1,7 @@
 # smbus2
 A drop-in replacement for smbus-cffi/smbus-python in pure Python
 
-![Build Status](https://github.com/github/docs/actions/workflows/python-build-test.yml/badge.svg?branch=master) 
+[![Build Status](https://github.com/kplindegaard/smbus2/actions/workflows/python-build-test.yml/badge.svg?branch=master)](https://github.com/kplindegaard/smbus2/actions/workflows/python-build-test.yml)
 [![Documentation Status](https://readthedocs.org/projects/smbus2/badge/?version=latest)](http://smbus2.readthedocs.io/en/latest/?badge=latest)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=kplindegaard_smbus2&metric=alert_status)](https://sonarcloud.io/dashboard?id=kplindegaard_smbus2)
 

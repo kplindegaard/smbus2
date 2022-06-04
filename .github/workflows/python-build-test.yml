@@ -1,10 +1,9 @@
-name: Python build and test
+name: Build and test
 
 on:
   push:
     branches:
-      - main
-      - feature/github_actions_build
+      - 'master'
   pull_request:
     
 jobs:
