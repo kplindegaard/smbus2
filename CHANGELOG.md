@@ -4,6 +4,12 @@ Notable changes to the smbus2 project are recorded here.
 ## [Unreleased]
 No unreleased updates.
 
+## [0.4.2] - 2022-06-05
+### General
+- Explicitly export from top level of package [#69](https://github.com/kplindegaard/smbus2/pull/69).
+- Transitioned pipelines from Travis-CI to GitHub Actions.
+  - Python 3.10 added.
+
 ## [0.4.1] - 2021-01-17
 ### General
 - SonarCloud quality checks.
@@ -86,7 +92,8 @@ with SMBus(1) as bus:
 First published version.
 
 
-[Unreleased]: https://github.com/kplindegaard/smbus2/compare/0.4.1...HEAD
+[Unreleased]: https://github.com/kplindegaard/smbus2/compare/0.4.2...HEAD
+[0.4.2]: https://github.com/kplindegaard/smbus2/compare/0.4.1...0.4.2
 [0.4.1]: https://github.com/kplindegaard/smbus2/compare/0.4.0...0.4.1
 [0.4.0]: https://github.com/kplindegaard/smbus2/compare/0.3.0...0.4.0
 [0.3.0]: https://github.com/kplindegaard/smbus2/compare/0.2.3...0.3.0
