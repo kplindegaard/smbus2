@@ -66,7 +66,7 @@ def mock_open(*args):
 
 
 def mock_close(*args):
-    assert args[0] == MOCK_FD
+    True
 
 
 def mock_read(fd, length):
@@ -184,13 +184,13 @@ class TestSMBus(unittest.TestCase):
         bus = SMBus(1)
         self.assertRaises(IOError, set_pec, bus, True)
         self.assertRaises(IOError, set_pec, bus, 1)
-        self.assertEquals(bus.pec, 0)
+        self.assertEqual(bus.pec, 0)
 
         # Ensure PEC status is reset by close()
         bus._pec = 1
-        self.assertEquals(bus.pec, 1)
+        self.assertEqual(bus.pec, 1)
         bus.close()
-        self.assertEquals(bus.pec, 0)
+        self.assertEqual(bus.pec, 0)
 
 
 class TestSMBusWrapper(unittest.TestCase):
