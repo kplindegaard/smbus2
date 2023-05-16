@@ -1,5 +1,7 @@
 .tox/
 doc/_build
+doc/doctrees
+doc/html
 build/
 dist/
 .vscode/

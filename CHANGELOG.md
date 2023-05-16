@@ -2,7 +2,12 @@
 Notable changes to the smbus2 project are recorded here.
 
 ## [Unreleased]
-No unreleased updates.
+- Build pipeline and test updates only:
+  - Upgrade build pipelines
+    - Added Python 3.11
+    - Python 3.4 and 3.5 no longer tested. 
+- Update deprecated Sphinx config format.
+- Corrected deprecated `assertEquals` in the unit tests.
 
 ## [0.4.2] - 2022-06-05
 ### General
