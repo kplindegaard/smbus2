@@ -66,7 +66,7 @@ def mock_open(*args):
 
 
 def mock_close(*args):
-    True
+    return
 
 
 def mock_read(fd, length):
