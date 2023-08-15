@@ -66,7 +66,7 @@ def mock_open(*args):
 
 
 def mock_close(*args):
-    return
+    assert args[0] == MOCK_FD
 
 
 def mock_read(fd, length):
@@ -106,17 +106,26 @@ def mock_ioctl(fd, command, msg):
 open_mock = mock.patch('smbus2.smbus2.os.open', mock_open)
 close_mock = mock.patch('smbus2.smbus2.os.close', mock_close)
 ioctl_mock = mock.patch('smbus2.smbus2.ioctl', mock_ioctl)
-open_mock.start()
-close_mock.start()
-ioctl_mock.start()
 ##########################################################################
 
 # Common error messages
 INCORRECT_LENGTH_MSG = "Result array of incorrect length."
 
 
+class SMBusTestCase(unittest.TestCase):
+    def setUp(self):
+        open_mock.start()
+        close_mock.start()
+        ioctl_mock.start()
+
+    def tearDown(self):
+        open_mock.stop()
+        close_mock.stop()
+        ioctl_mock.stop()
+
+
 # Test cases
-class TestSMBus(unittest.TestCase):
+class TestSMBus(SMBusTestCase):
     def test_func(self):
         bus = SMBus(1)
         print("\nSupported I2C functionality: %x" % bus.funcs)
@@ -193,7 +202,7 @@ class TestSMBus(unittest.TestCase):
         self.assertEqual(bus.pec, 0)
 
 
-class TestSMBusWrapper(unittest.TestCase):
+class TestSMBusWrapper(SMBusTestCase):
     """Similar test as TestSMBus except it encapsulates it all access within "with" blocks."""
 
     def test_func(self):
@@ -231,7 +240,7 @@ class TestSMBusWrapper(unittest.TestCase):
         self.assertListEqual(res, res3, msg="Byte and block reads differ")
 
 
-class TestI2CMsg(unittest.TestCase):
+class TestI2CMsg(SMBusTestCase):
     def test_i2c_msg(self):
         # 1: Convert message content to list
         msg = i2c_msg.write(60, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
