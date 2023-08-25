@@ -2,6 +2,9 @@
 Notable changes to the smbus2 project are recorded here.
 
 ## [Unreleased]
+No changes since last release.
+
+## [0.4.3] - 2023-08-25
 - Build pipeline and test updates only:
   - Upgrade build pipelines
     - Added Python 3.11
@@ -97,7 +100,8 @@ with SMBus(1) as bus:
 First published version.
 
 
-[Unreleased]: https://github.com/kplindegaard/smbus2/compare/0.4.2...HEAD
+[Unreleased]: https://github.com/kplindegaard/smbus2/compare/0.4.3...HEAD
+[0.4.3]: https://github.com/kplindegaard/smbus2/compare/0.4.2...0.4.3
 [0.4.2]: https://github.com/kplindegaard/smbus2/compare/0.4.1...0.4.2
 [0.4.1]: https://github.com/kplindegaard/smbus2/compare/0.4.0...0.4.1
 [0.4.0]: https://github.com/kplindegaard/smbus2/compare/0.3.0...0.4.0
