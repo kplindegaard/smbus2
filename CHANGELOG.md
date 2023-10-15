@@ -2,7 +2,21 @@
 Notable changes to the smbus2 project are recorded here.
 
 ## [Unreleased]
-No unreleased updates.
+No changes since last release.
+
+## [0.4.3] - 2023-08-25
+- Build pipeline and test updates only:
+  - Upgrade build pipelines
+    - Added Python 3.11
+    - Python 2.7, 3.4, and 3.5 no longer tested.
+- Update deprecated Sphinx config format.
+- Corrected deprecated `assertEquals` in the unit tests.
+
+## [0.4.2] - 2022-06-05
+### General
+- Explicitly export from top level of package [#69](https://github.com/kplindegaard/smbus2/pull/69).
+- Transitioned pipelines from Travis-CI to GitHub Actions.
+  - Python 3.10 added.
 
 ## [0.4.1] - 2021-01-17
 ### General
@@ -86,7 +100,9 @@ with SMBus(1) as bus:
 First published version.
 
 
-[Unreleased]: https://github.com/kplindegaard/smbus2/compare/0.4.1...HEAD
+[Unreleased]: https://github.com/kplindegaard/smbus2/compare/0.4.3...HEAD
+[0.4.3]: https://github.com/kplindegaard/smbus2/compare/0.4.2...0.4.3
+[0.4.2]: https://github.com/kplindegaard/smbus2/compare/0.4.1...0.4.2
 [0.4.1]: https://github.com/kplindegaard/smbus2/compare/0.4.0...0.4.1
 [0.4.0]: https://github.com/kplindegaard/smbus2/compare/0.3.0...0.4.0
 [0.3.0]: https://github.com/kplindegaard/smbus2/compare/0.2.3...0.3.0
