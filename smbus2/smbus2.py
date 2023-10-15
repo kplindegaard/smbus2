@@ -22,7 +22,7 @@
 
 import os
 import sys
-from platform import system
+from platform import system, architecture
 from fcntl import ioctl
 from ctypes import c_uint32, c_uint8, c_uint16, c_char, POINTER, Structure, Array, Union, create_string_buffer, string_at
 
@@ -51,7 +51,8 @@ I2C_SMBUS_I2C_BLOCK_DATA = 8
 I2C_SMBUS_BLOCK_MAX = 32
 
 #FreeBSD RDWR syscall
-I2CRDWR = 0x80106906
+(bits, _) = architecture()
+I2CRDWR = { '64bit': 0x80106906, '32bit': 0x80086906 }[bits]
 
 # To determine what functionality is present (uapi/linux/i2c.h)
 try:
