@@ -66,6 +66,7 @@ def mock_open(*args):
 
 
 def mock_close(*args):
+    print("Mocking close: %s" % args[0])
     assert args[0] == MOCK_FD
 
 
@@ -102,10 +103,23 @@ def mock_ioctl(fd, command, msg):
         raise IOError("Mocking SMBus Quick failed")
 
 
+# Mock platform.system functions for FreeBSD testing
+def mock_get_system_freebsd():
+    print('Mocking get_system()')
+    return 'FreeBSD'
+
+
+# Mock platform.architecture functions for FreeBSD testing
+def mock_get_arch_freebsd():
+    return ('64bit', 'ELF')
+
+
 # Override open, close and ioctl with our mock functions
 open_mock = mock.patch('smbus2.smbus2.os.open', mock_open)
 close_mock = mock.patch('smbus2.smbus2.os.close', mock_close)
 ioctl_mock = mock.patch('smbus2.smbus2.ioctl', mock_ioctl)
+freebsd_system_mock = mock.patch('smbus2.smbus2.get_system', mock_get_system_freebsd)
+freebsd_arch_mock = mock.patch('smbus2.smbus2.get_architecture', mock_get_arch_freebsd)
 ##########################################################################
 
 # Common error messages
@@ -128,6 +142,7 @@ class SMBusTestCase(unittest.TestCase):
 class TestSMBus(SMBusTestCase):
     def test_func(self):
         bus = SMBus(1)
+        bus.open(1)
         print("\nSupported I2C functionality: %x" % bus.funcs)
         bus.close()
 
@@ -158,6 +173,7 @@ class TestSMBus(SMBusTestCase):
         res3 = []
 
         bus = SMBus(1)
+        bus.open(1)
 
         # Read bytes
         for k in range(2):
@@ -183,6 +199,7 @@ class TestSMBus(SMBusTestCase):
 
     def test_quick(self):
         bus = SMBus(1)
+        bus.open(1)
         self.assertRaises(IOError, bus.write_quick, 80)
 
     def test_pec(self):
@@ -191,6 +208,7 @@ class TestSMBus(SMBusTestCase):
 
         # Enabling PEC should fail (no mocked PEC support)
         bus = SMBus(1)
+        bus.open(1)
         self.assertRaises(IOError, set_pec, bus, True)
         self.assertRaises(IOError, set_pec, bus, 1)
         self.assertEqual(bus.pec, 0)
@@ -264,3 +282,42 @@ class TestI2CMsg(SMBusTestCase):
             k += 1
         self.assertEqual(k, 10, msg='Incorrect length')
         self.assertEqual(s, 55, msg='Incorrect sum')
+
+
+# FreeBSD test cases
+class SMBusFreeBSDTestCase(unittest.TestCase):
+    def setUp(self):
+        open_mock.start()
+        close_mock.start()
+        ioctl_mock.start()
+        freebsd_system_mock.start()
+        freebsd_arch_mock.start()
+
+    def tearDown(self):
+        open_mock.stop()
+        close_mock.stop()
+        ioctl_mock.stop()
+        freebsd_system_mock.stop()
+        freebsd_arch_mock.stop()
+
+
+class TestSMBusFreeBSD(SMBusFreeBSDTestCase):
+    def test_freebsd_detected(self):
+        with SMBus(1) as bus:
+            self.assertTrue(bus.funcs & I2cFunc.I2C > 0)
+            self.assertTrue(bus.funcs & I2cFunc.SMBUS_QUICK > 0)
+            self.assertEqual(type(bus).__name__, 'SMBusFreeBSD')
+
+    def test_freebsd_enter_exit(self):
+        for id in (1, '/dev/i2c-alias'):
+            with SMBus(id) as bus:
+                self.assertEqual(type(bus).__name__, 'SMBusFreeBSD')
+                self.assertIsNotNone(bus.fd)
+            self.assertIsNone(bus.fd, None)
+
+        with SMBus() as bus:
+            self.assertEqual(type(bus).__name__, 'SMBusFreeBSD')
+            self.assertIsNone(bus.fd)
+            bus.open(2)
+            self.assertIsNotNone(bus.fd)
+        self.assertIsNone(bus.fd)
