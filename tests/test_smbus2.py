@@ -103,14 +103,20 @@ def mock_ioctl(fd, command, msg):
         raise IOError("Mocking SMBus Quick failed")
 
 
+# Mock platform.system function for Linux testing
+def mock_get_system_linux():
+    print('Mocking get_system() for Linux')
+    return 'Linux'
+
+
 # Mock platform.system functions for FreeBSD testing
 def mock_get_system_freebsd():
-    print('Mocking get_system()')
+    print('Mocking get_system() for FreeBSD')
     return 'FreeBSD'
 
 
 # Mock platform.architecture functions for FreeBSD testing
-def mock_get_arch_freebsd():
+def mock_get_arch():
     return ('64bit', 'ELF')
 
 
@@ -118,8 +124,9 @@ def mock_get_arch_freebsd():
 open_mock = mock.patch('smbus2.smbus2.os.open', mock_open)
 close_mock = mock.patch('smbus2.smbus2.os.close', mock_close)
 ioctl_mock = mock.patch('smbus2.smbus2.ioctl', mock_ioctl)
+linux_system_mock = mock.patch('smbus2.smbus2.get_system', mock_get_system_linux)
 freebsd_system_mock = mock.patch('smbus2.smbus2.get_system', mock_get_system_freebsd)
-freebsd_arch_mock = mock.patch('smbus2.smbus2.get_architecture', mock_get_arch_freebsd)
+arch_mock = mock.patch('smbus2.smbus2.get_architecture', mock_get_arch)
 ##########################################################################
 
 # Common error messages
@@ -131,11 +138,15 @@ class SMBusTestCase(unittest.TestCase):
         open_mock.start()
         close_mock.start()
         ioctl_mock.start()
+        linux_system_mock.start()
+        arch_mock.start()
 
     def tearDown(self):
         open_mock.stop()
         close_mock.stop()
         ioctl_mock.stop()
+        linux_system_mock.stop()
+        arch_mock.stop()
 
 
 # Test cases
@@ -291,14 +302,14 @@ class SMBusFreeBSDTestCase(unittest.TestCase):
         close_mock.start()
         ioctl_mock.start()
         freebsd_system_mock.start()
-        freebsd_arch_mock.start()
+        arch_mock.start()
 
     def tearDown(self):
         open_mock.stop()
         close_mock.stop()
         ioctl_mock.stop()
         freebsd_system_mock.stop()
-        freebsd_arch_mock.stop()
+        arch_mock.stop()
 
 
 class TestSMBusFreeBSD(SMBusFreeBSDTestCase):
