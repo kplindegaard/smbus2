@@ -27,7 +27,7 @@ try:
 except ImportError:
     import mock  # noqa: F401
 
-from smbus2 import SMBus, i2c_msg, I2cFunc
+from smbus2 import SMBus, SMBusFreeBSD, i2c_msg, I2cFunc
 
 
 ##########################################################################
@@ -240,6 +240,15 @@ class TestSMBusWrapper(SMBusTestCase):
             self.assertTrue(bus.funcs & I2cFunc.I2C > 0)
             self.assertTrue(bus.funcs & I2cFunc.SMBUS_QUICK > 0)
 
+    def test_repeated_with(self):
+        bus = SMBus(1)
+        with bus:
+            x = bus.read_i2c_block_data(80, 0, 2)
+        self.assertEqual(len(x), 2, msg=INCORRECT_LENGTH_MSG)
+        with bus:
+            y = bus.read_i2c_block_data(80, 0, 2)
+        self.assertEqual(x, y, msg="Results differ")
+
     def test_read(self):
         res = []
         res2 = []
@@ -303,6 +312,7 @@ class SMBusFreeBSDTestCase(unittest.TestCase):
         ioctl_mock.start()
         freebsd_system_mock.start()
         arch_mock.start()
+        SMBus.system = None  # Reset OS detection
 
     def tearDown(self):
         open_mock.stop()
@@ -313,6 +323,14 @@ class SMBusFreeBSDTestCase(unittest.TestCase):
 
 
 class TestSMBusFreeBSD(SMBusFreeBSDTestCase):
+    def test_freebsd_explicit(self):
+        bus = SMBusFreeBSD(1)
+        self.assertEqual(type(bus).__name__, 'SMBusFreeBSD')
+
+    def test_freebsd_with(self):
+        with SMBusFreeBSD(1) as bus:
+            self.assertEqual(type(bus).__name__, 'SMBusFreeBSD')
+
     def test_freebsd_detected(self):
         with SMBus(1) as bus:
             self.assertTrue(bus.funcs & I2cFunc.I2C > 0)

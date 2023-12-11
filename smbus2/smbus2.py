@@ -269,6 +269,7 @@ def get_architecture():
 
 
 class SMBus(object):
+    system = None
 
     def __init__(self, bus=None, force=False):
         """
@@ -282,6 +283,8 @@ class SMBus(object):
             already using it.
         :type force: boolean
         """
+        if SMBus.system is None:
+            SMBus.system = get_system()
         self.fd = None
         self.funcs = I2cFunc(0)
         # if bus is not None:
@@ -294,7 +297,7 @@ class SMBus(object):
 
     def __enter__(self):
         """Enter handler."""
-        if get_system() == 'FreeBSD':
+        if SMBus.system == 'FreeBSD':
             self.freebsd = SMBusFreeBSD(self.bus, self.force)
             if self.bus is not None:
                 self.freebsd.open(self.freebsd.bus)
@@ -678,12 +681,15 @@ class SMBus(object):
 
 
 class SMBusFreeBSD(SMBus):
-    def __init__(self, bus, force=False):
+    bits = None
+
+    def __init__(self, bus=None, force=False):
         SMBus.__init__(self, bus, force)
 
         # FreeBSD specific intialization stuff here
-        (bits, _) = get_architecture()
-        self.I2CRDWR = {'64bit': 0x80106906, '32bit': 0x80086906}[bits]
+        if SMBusFreeBSD.bits is None:
+            (SMBusFreeBSD.bits, _) = get_architecture()
+            self.I2CRDWR = {'64bit': 0x80106906, '32bit': 0x80086906}[SMBusFreeBSD.bits]
 
     def __enter__(self):
         """Enter handler."""
