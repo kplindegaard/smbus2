@@ -318,6 +318,8 @@ class SMBus(object):
             os.close(self.fd)
             self.fd = None
             self._pec = 0
+            self.address = None
+            self._force_last = None
 
     def _get_pec(self):
         return self._pec
