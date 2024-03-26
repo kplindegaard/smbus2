@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.7", "3.8", "3.9", "3.10", "3.11"]
+        python-version: ["3.7", "3.8", "3.9", "3.10", "3.11", "3.12"]
     steps:
       - uses: actions/checkout@v4
       - name: Set up Python ${{ matrix.python-version }}
@@ -22,6 +22,12 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install flake8 pytest
+      - name: Additional install for Python 3.12 or higher
+        if: ${{ matrix.python-version >= '3.12' }}
+        run: |
+          pip install setuptools
+      - name: Install smbus2
+        run: |
           python setup.py install
       - name: Lint with flake8
         run: |

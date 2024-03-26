@@ -2,7 +2,7 @@
 Notable changes to the smbus2 project are recorded here.
 
 ## [Unreleased]
-No changes since last release.
+- Python 3.12 added.
 
 ## [0.4.3] - 2023-08-25
 - Build pipeline and test updates only:
