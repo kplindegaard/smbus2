@@ -26,10 +26,6 @@ def find_version(*file_paths):
 
 README = read_file('README.md')
 version = find_version('smbus2', '__init__.py')
-test_deps = [
-    'mock;python_version<"3.3"',
-    'nose'
-]
 
 setup(
     name="smbus2",
@@ -50,8 +46,7 @@ setup(
         ],
         'qa': [
             'flake8'
-        ],
-        'test': test_deps
+        ]
     },
     classifiers=[
         "Development Status :: 4 - Beta",
@@ -60,13 +55,12 @@ setup(
         "Programming Language :: Python :: 2",
         "Programming Language :: Python :: 2.7",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.4",
-        "Programming Language :: Python :: 3.5",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
-        "Programming Language :: Python :: 3.11"
+        "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12"
     ],
 )
