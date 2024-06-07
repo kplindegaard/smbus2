@@ -658,3 +658,31 @@ class SMBus(object):
         """
         ioctl_data = i2c_rdwr_ioctl_data.create(*i2c_msgs)
         ioctl(self.fd, I2C_RDWR, ioctl_data)
+
+    def i2c_rd(self, i2c_addr, length):
+        """
+        Perform a single i2c read operation, given an i2c_addr and length.
+
+        :param i2c_addr: i2c address for the read operation.
+        :type i2c_addr: int
+        :param length: length of read.
+        :type length: int
+        :rtype: list
+        """
+        msg = i2c_msg.read(i2c_addr, length)
+        self.i2c_rdwr(msg)
+        return list(msg)
+
+    def i2c_wr(self, i2c_addr, buf):
+        """
+        Perform a single i2c write operation, given an i2c_addr and a
+        buffer to copy.
+
+        :param i2c_addr: i2c address for the write operation.
+        :type i2c_addr: int
+        :param buf: buffer to write.
+        :type buf: list
+        :rtype: None
+        """
+        msg = i2c_msg.write(i2c_addr, buf)
+        self.i2c_rdwr(msg)
