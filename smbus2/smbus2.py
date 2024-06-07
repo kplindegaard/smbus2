@@ -383,6 +383,7 @@ class SMBus(object):
     def _set_address(self, address, force=None):
         """
         Set i2c slave address to use for subsequent calls.
+        Private.
 
         :param address:
         :type address: int
@@ -402,6 +403,7 @@ class SMBus(object):
     def _get_funcs(self):
         """
         Returns a 32-bit value stating supported I2C functions.
+        Private.
 
         :rtype: int
         """

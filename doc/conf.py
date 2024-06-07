@@ -84,7 +84,8 @@ todo_include_todos = False
 autodoc_default_options = {
     "members": True,
     "member-order": "bysource",
-    "special-members": "__init__,__str__,__iter__,_get_funcs,_set_address",
+    "special-members": "__init__,__str__,__iter__",
+    "private-members": "_get_funcs,_set_address",
     "undoc-members": False,
     "exclude-members": "__weakref__,addr,flags,len,buf",
 }
