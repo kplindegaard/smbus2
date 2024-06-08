@@ -51,8 +51,9 @@ master_doc = "index"
 
 # General information about the project.
 project = "smbus2"
+doc_title = "{} Documentation".format(project)
 author = "Karl-Petter Lindegaard"
-copyright = "2017, {}".format(author)
+copyright = "2017-2024, {}".format(author)
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -148,15 +149,14 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, "smbus2.tex", "smbus2 Documentation", author, "manual"),
+    (master_doc, "smbus2.tex", doc_title, author, "manual"),
 ]
-
 
 # -- Options for manual page output ---------------------------------------
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
-man_pages = [(master_doc, "smbus2", "smbus2 Documentation", [author], 1)]
+man_pages = [(master_doc, project, doc_title, [author], 1)]
 
 
 # -- Options for Texinfo output -------------------------------------------
@@ -167,15 +167,14 @@ man_pages = [(master_doc, "smbus2", "smbus2 Documentation", [author], 1)]
 texinfo_documents = [
     (
         master_doc,
-        "smbus2",
-        "smbus2 Documentation",
+        project,
+        doc_title,
         author,
-        "smbus2",
+        project,
         "One line description of project.",
         "Miscellaneous",
     ),
 ]
-
 
 # Configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {"python": ("https://docs.python.org/3/", None)}
