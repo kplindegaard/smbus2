@@ -23,12 +23,25 @@
 import os
 import sys
 from fcntl import ioctl
-from ctypes import c_uint32, c_uint8, c_uint16, c_char, POINTER, Structure, Array, Union, create_string_buffer, string_at
+from ctypes import (
+    c_uint32,
+    c_uint8,
+    c_uint16,
+    c_char,
+    POINTER,
+    Structure,
+    Array,
+    Union,
+    create_string_buffer,
+    string_at,
+)
 
 
 # Commands from uapi/linux/i2c-dev.h
 I2C_SLAVE = 0x0703  # Use this slave address
-I2C_SLAVE_FORCE = 0x0706  # Use this slave address, even if it is already in use by a driver!
+I2C_SLAVE_FORCE = (
+    0x0706  # Use this slave address, even if it is already in use by a driver!
+)
 I2C_FUNCS = 0x0705  # Get the adapter functionality mask
 I2C_RDWR = 0x0707  # Combined R/W transfer (one STOP only)
 I2C_SMBUS = 0x0720  # SMBus transfer. Takes pointer to i2c_smbus_ioctl_data
@@ -45,7 +58,9 @@ I2C_SMBUS_BYTE_DATA = 2
 I2C_SMBUS_WORD_DATA = 3
 I2C_SMBUS_PROC_CALL = 4
 I2C_SMBUS_BLOCK_DATA = 5  # This isn't supported by Pure-I2C drivers with SMBUS emulation, like those in RaspberryPi, OrangePi, etc :(
-I2C_SMBUS_BLOCK_PROC_CALL = 7  # Like I2C_SMBUS_BLOCK_DATA, it isn't supported by Pure-I2C drivers either.
+I2C_SMBUS_BLOCK_PROC_CALL = (
+    7  # Like I2C_SMBUS_BLOCK_DATA, it isn't supported by Pure-I2C drivers either.
+)
 I2C_SMBUS_I2C_BLOCK_DATA = 8
 I2C_SMBUS_BLOCK_MAX = 32
 
@@ -65,6 +80,7 @@ class I2cFunc(IntFlag):
     On newer python versions, I2cFunc is an IntFlag enum, but it
     falls back to class with a bunch of int constants on older releases.
     """
+
     I2C = 0x00000001
     ADDR_10BIT = 0x00000002
     PROTOCOL_MANGLING = 0x00000004  # I2C_M_IGNORE_NAK etc.
@@ -90,8 +106,8 @@ class I2cFunc(IntFlag):
     SMBUS_BYTE_DATA = 0x00180000
     SMBUS_WORD_DATA = 0x00600000
     SMBUS_BLOCK_DATA = 0x03000000
-    SMBUS_I2C_BLOCK = 0x0c000000
-    SMBUS_EMUL = 0x0eff0008
+    SMBUS_I2C_BLOCK = 0x0C000000
+    SMBUS_EMUL = 0x0EFF0008
 
 
 # i2c_msg flags from uapi/linux/i2c.h
@@ -113,16 +129,13 @@ class i2c_smbus_data(Array):
 
     Data for SMBus messages.
     """
+
     _length_ = I2C_SMBUS_BLOCK_MAX + 2
     _type_ = c_uint8
 
 
 class union_i2c_smbus_data(Union):
-    _fields_ = [
-        ("byte", c_uint8),
-        ("word", c_uint16),
-        ("block", i2c_smbus_data)
-    ]
+    _fields_ = [("byte", c_uint8), ("word", c_uint16), ("block", i2c_smbus_data)]
 
 
 union_pointer_type = POINTER(union_i2c_smbus_data)
@@ -132,19 +145,24 @@ class i2c_smbus_ioctl_data(Structure):
     """
     As defined in ``i2c-dev.h``.
     """
+
     _fields_ = [
-        ('read_write', c_uint8),
-        ('command', c_uint8),
-        ('size', c_uint32),
-        ('data', union_pointer_type)]
+        ("read_write", c_uint8),
+        ("command", c_uint8),
+        ("size", c_uint32),
+        ("data", union_pointer_type),
+    ]
     __slots__ = [name for name, type in _fields_]
 
     @staticmethod
     def create(read_write=I2C_SMBUS_READ, command=0, size=I2C_SMBUS_BYTE_DATA):
         u = union_i2c_smbus_data()
         return i2c_smbus_ioctl_data(
-            read_write=read_write, command=command, size=size,
-            data=union_pointer_type(u))
+            read_write=read_write,
+            command=command,
+            size=size,
+            data=union_pointer_type(u),
+        )
 
 
 #############################################################
@@ -154,15 +172,27 @@ class i2c_smbus_ioctl_data(Structure):
 class i2c_msg(Structure):
     """
     As defined in ``i2c.h``.
+
+    :ivar addr: i2c address
+    :vartype addr: c_uint16
+    :ivar flags: bit flags
+    :vartype flags: c_uint16
+    :ivar len: length
+    :vartype len: c_uint16
+    :ivar buf: data buffer
+    :vartype buf: POINTER(c_char)
     """
+
     _fields_ = [
-        ('addr', c_uint16),
-        ('flags', c_uint16),
-        ('len', c_uint16),
-        ('buf', POINTER(c_char))]
+        ("addr", c_uint16),
+        ("flags", c_uint16),
+        ("len", c_uint16),
+        ("buf", POINTER(c_char)),
+    ]
 
     def __iter__(self):
-        """ Iterator / Generator
+        """
+        Iterator / Generator
 
         :return: iterates over :py:attr:`buf`
         :rtype: :py:class:`generator` which returns int values
@@ -179,9 +209,15 @@ class i2c_msg(Structure):
         return string_at(self.buf, self.len)
 
     def __repr__(self):
-        return 'i2c_msg(%d,%d,%r)' % (self.addr, self.flags, self.__bytes__())
+        return "i2c_msg(%d,%d,%r)" % (self.addr, self.flags, self.__bytes__())
 
     def __str__(self):
+        """
+        Return a string, discarding non decodable bytes.
+
+        :return: string of i2c_msg.__bytes__()
+        :rtype: str
+        """
         s = self.__bytes__()
         # Throw away non-decodable bytes
         s = s.decode(errors="ignore")
@@ -200,9 +236,7 @@ class i2c_msg(Structure):
         :rtype: :py:class:`i2c_msg`
         """
         arr = create_string_buffer(length)
-        return i2c_msg(
-            addr=address, flags=I2C_M_RD, len=length,
-            buf=arr)
+        return i2c_msg(addr=address, flags=I2C_M_RD, len=length, buf=arr)
 
     @staticmethod
     def write(address, buf):
@@ -223,21 +257,22 @@ class i2c_msg(Structure):
                 buf = bytes(buf)
         else:
             if type(buf) is not str:
-                buf = ''.join([chr(x) for x in buf])
+                buf = "".join([chr(x) for x in buf])
         arr = create_string_buffer(buf, len(buf))
-        return i2c_msg(
-            addr=address, flags=0, len=len(arr),
-            buf=arr)
+        return i2c_msg(addr=address, flags=0, len=len(arr), buf=arr)
 
 
 class i2c_rdwr_ioctl_data(Structure):
     """
     As defined in ``i2c-dev.h``.
+
+    Fields:
+        msgs  - POINTER(i2c_msg)
+
+        nmsgs - c_uint32
     """
-    _fields_ = [
-        ('msgs', POINTER(i2c_msg)),
-        ('nmsgs', c_uint32)
-    ]
+
+    _fields_ = [("msgs", POINTER(i2c_msg)), ("nmsgs", c_uint32)]
     __slots__ = [name for name, type in _fields_]
 
     @staticmethod
@@ -251,16 +286,16 @@ class i2c_rdwr_ioctl_data(Structure):
         """
         n_msg = len(i2c_msg_instances)
         msg_array = (i2c_msg * n_msg)(*i2c_msg_instances)
-        return i2c_rdwr_ioctl_data(
-            msgs=msg_array,
-            nmsgs=n_msg
-        )
+        return i2c_rdwr_ioctl_data(msgs=msg_array, nmsgs=n_msg)
 
 
 #############################################################
 
 
 class SMBus(object):
+    """
+    The main SMBus class.
+    """
 
     def __init__(self, bus=None, force=False):
         """
@@ -299,6 +334,7 @@ class SMBus(object):
             or an absolute file path (e.g. '/dev/i2c-42').
         :type bus: int or str
         :raise TypeError: if type(bus) is not in (int, str)
+        :rtype: None
         """
         if isinstance(bus, int):
             filepath = "/dev/i2c-{}".format(bus)
@@ -313,6 +349,9 @@ class SMBus(object):
     def close(self):
         """
         Close the i2c connection.
+
+        :raise OSError: if the file descriptor in self.fd does not exist
+        :rtype: None
         """
         if self.fd:
             os.close(self.fd)
@@ -329,10 +368,12 @@ class SMBus(object):
         Enable/Disable PEC (Packet Error Checking) - SMBus 1.1 and later
 
         :param enable:
-        :type enable: Boolean
+        :type enable: bool
+        :raise IOError: if SMBUS_PEC is not supported.
+        :rtype: None
         """
         if not (self.funcs & I2cFunc.SMBUS_PEC):
-            raise IOError('SMBUS_PEC is not a feature')
+            raise IOError("SMBUS_PEC is not a feature")
         self._pec = int(enable)
         ioctl(self.fd, I2C_PEC, self._pec)
 
@@ -342,11 +383,13 @@ class SMBus(object):
     def _set_address(self, address, force=None):
         """
         Set i2c slave address to use for subsequent calls.
+        Private.
 
         :param address:
         :type address: int
-        :param force:
-        :type force: Boolean
+        :param force: force using the slave address even when driver is already using it.
+        :type force: bool
+        :rtype: None
         """
         force = force if force is not None else self.force
         if self.address != address or self._force_last != force:
@@ -360,6 +403,7 @@ class SMBus(object):
     def _get_funcs(self):
         """
         Returns a 32-bit value stating supported I2C functions.
+        Private.
 
         :rtype: int
         """
@@ -370,14 +414,18 @@ class SMBus(object):
     def write_quick(self, i2c_addr, force=None):
         """
         Perform quick transaction. Throws IOError if unsuccessful.
+
         :param i2c_addr: i2c address
         :type i2c_addr: int
-        :param force:
-        :type force: Boolean
+        :param force: force using the slave address even when driver is already using it.
+        :type force: bool
+        :raise IOError: if write is unsuccessful.
+        :rtype: None
         """
         self._set_address(i2c_addr, force=force)
         msg = i2c_smbus_ioctl_data.create(
-            read_write=I2C_SMBUS_WRITE, command=0, size=I2C_SMBUS_QUICK)
+            read_write=I2C_SMBUS_WRITE, command=0, size=I2C_SMBUS_QUICK
+        )
         ioctl(self.fd, I2C_SMBUS, msg)
 
     def read_byte(self, i2c_addr, force=None):
@@ -387,9 +435,10 @@ class SMBus(object):
         :rtype: int
         :param i2c_addr: i2c address
         :type i2c_addr: int
-        :param force:
-        :type force: Boolean
+        :param force: force using the slave address even when driver is already using it.
+        :type force: bool
         :return: Read byte value
+        :rtype: int
         """
         self._set_address(i2c_addr, force=force)
         msg = i2c_smbus_ioctl_data.create(
@@ -406,8 +455,9 @@ class SMBus(object):
         :type i2c_addr: int
         :param value: value to write
         :type value: int
-        :param force:
-        :type force: Boolean
+        :param force: force using the slave address even when driver is already using it.
+        :type force: bool
+        :rtype: None
         """
         self._set_address(i2c_addr, force=force)
         msg = i2c_smbus_ioctl_data.create(
@@ -423,8 +473,8 @@ class SMBus(object):
         :type i2c_addr: int
         :param register: Register to read
         :type register: int
-        :param force:
-        :type force: Boolean
+        :param force: force using the slave address even when driver is already using it.
+        :type force: bool
         :return: Read byte value
         :rtype: int
         """
@@ -445,8 +495,8 @@ class SMBus(object):
         :type register: int
         :param value: Byte value to transmit
         :type value: int
-        :param force:
-        :type force: Boolean
+        :param force: force using the slave address even when driver is already using it.
+        :type force: bool
         :rtype: None
         """
         self._set_address(i2c_addr, force=force)
@@ -464,8 +514,8 @@ class SMBus(object):
         :type i2c_addr: int
         :param register: Register to read
         :type register: int
-        :param force:
-        :type force: Boolean
+        :param force: force using the slave address even when driver is already using it.
+        :type force: bool
         :return: 2-byte word
         :rtype: int
         """
@@ -486,8 +536,8 @@ class SMBus(object):
         :type register: int
         :param value: Word value to transmit
         :type value: int
-        :param force:
-        :type force: Boolean
+        :param force: force using the slave address even when driver is already using it.
+        :type force: bool
         :rtype: None
         """
         self._set_address(i2c_addr, force=force)
@@ -507,8 +557,8 @@ class SMBus(object):
         :type register: int
         :param value: Word value to transmit
         :type value: int
-        :param force:
-        :type force: Boolean
+        :param force: force using the slave address even when driver is already using it.
+        :type force: bool
         :rtype: int
         """
         self._set_address(i2c_addr, force=force)
@@ -527,8 +577,8 @@ class SMBus(object):
         :type i2c_addr: int
         :param register: Start register
         :type register: int
-        :param force:
-        :type force: Boolean
+        :param force: force using the slave address even when driver is already using it.
+        :type force: bool
         :return: List of bytes
         :rtype: list
         """
@@ -538,7 +588,7 @@ class SMBus(object):
         )
         ioctl(self.fd, I2C_SMBUS, msg)
         length = msg.data.contents.block[0]
-        return msg.data.contents.block[1:length + 1]
+        return msg.data.contents.block[1 : length + 1]
 
     def write_block_data(self, i2c_addr, register, data, force=None):
         """
@@ -550,8 +600,9 @@ class SMBus(object):
         :type register: int
         :param data: List of bytes
         :type data: list
-        :param force:
-        :type force: Boolean
+        :param force: force using the slave address even when driver is already using it.
+        :type force: bool
+        :raise ValueError: if length of data in bytes is > I2C_SMBUS_BLOCK_MAX
         :rtype: None
         """
         length = len(data)
@@ -562,7 +613,7 @@ class SMBus(object):
             read_write=I2C_SMBUS_WRITE, command=register, size=I2C_SMBUS_BLOCK_DATA
         )
         msg.data.contents.block[0] = length
-        msg.data.contents.block[1:length + 1] = data
+        msg.data.contents.block[1 : length + 1] = data
         ioctl(self.fd, I2C_SMBUS, msg)
 
     def block_process_call(self, i2c_addr, register, data, force=None):
@@ -576,8 +627,9 @@ class SMBus(object):
         :type register: int
         :param data: List of bytes
         :type data: list
-        :param force:
-        :type force: Boolean
+        :param force: force using the slave address even when driver is already using it.
+        :type force: bool
+        :raise ValueError: if length of data in bytes is > I2C_SMBUS_BLOCK_MAX
         :return: List of bytes
         :rtype: list
         """
@@ -589,10 +641,10 @@ class SMBus(object):
             read_write=I2C_SMBUS_WRITE, command=register, size=I2C_SMBUS_BLOCK_PROC_CALL
         )
         msg.data.contents.block[0] = length
-        msg.data.contents.block[1:length + 1] = data
+        msg.data.contents.block[1 : length + 1] = data
         ioctl(self.fd, I2C_SMBUS, msg)
         length = msg.data.contents.block[0]
-        return msg.data.contents.block[1:length + 1]
+        return msg.data.contents.block[1 : length + 1]
 
     def read_i2c_block_data(self, i2c_addr, register, length, force=None):
         """
@@ -604,8 +656,9 @@ class SMBus(object):
         :type register: int
         :param length: Desired block length
         :type length: int
-        :param force:
-        :type force: Boolean
+        :param force: force using the slave address even when driver is already using it.
+        :type force: bool
+        :raise ValueError: if length (in bytes) is > I2C_SMBUS_BLOCK_MAX
         :return: List of bytes
         :rtype: list
         """
@@ -617,7 +670,7 @@ class SMBus(object):
         )
         msg.data.contents.byte = length
         ioctl(self.fd, I2C_SMBUS, msg)
-        return msg.data.contents.block[1:length + 1]
+        return msg.data.contents.block[1 : length + 1]
 
     def write_i2c_block_data(self, i2c_addr, register, data, force=None):
         """
@@ -629,8 +682,9 @@ class SMBus(object):
         :type register: int
         :param data: List of bytes
         :type data: list
-        :param force:
-        :type force: Boolean
+        :param force: force using the slave address even when driver is already using it.
+        :type force: bool
+        :raise ValueError: if length of data in bytes is > I2C_SMBUS_BLOCK_MAX
         :rtype: None
         """
         length = len(data)
@@ -641,7 +695,7 @@ class SMBus(object):
             read_write=I2C_SMBUS_WRITE, command=register, size=I2C_SMBUS_I2C_BLOCK_DATA
         )
         msg.data.contents.block[0] = length
-        msg.data.contents.block[1:length + 1] = data
+        msg.data.contents.block[1 : length + 1] = data
         ioctl(self.fd, I2C_SMBUS, msg)
 
     def i2c_rdwr(self, *i2c_msgs):
