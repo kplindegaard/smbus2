@@ -193,9 +193,9 @@ class i2c_msg(Structure):
         Prepares an i2c read transaction.
 
         :param address: Slave address.
-        :type: address: int
+        :type address: int
         :param length: Number of bytes to read.
-        :type: length: int
+        :type length: int
         :return: New :py:class:`i2c_msg` instance for read operation.
         :rtype: :py:class:`i2c_msg`
         """
