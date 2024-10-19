@@ -2,7 +2,13 @@
 Notable changes to the smbus2 project are recorded here.
 
 ## [Unreleased]
-- Python 3.12 added.
+
+## [0.5.0] - 2024-10-19
+- Slight change of `SMBus` object life-cycle to better handle "open -> close -> open" scenarios. [107](https://github.com/kplindegaard/smbus2/pull/107).
+- Maintenance updates:
+  - Documentation builds again! [106](https://github.com/kplindegaard/smbus2/pull/106).
+  - Typing corrections. [109](https://github.com/kplindegaard/smbus2/pull/109).
+  - Python 3.12, 3.13 added.
 
 ## [0.4.3] - 2023-08-25
 - Build pipeline and test updates only:
@@ -100,7 +106,8 @@ with SMBus(1) as bus:
 First published version.
 
 
-[Unreleased]: https://github.com/kplindegaard/smbus2/compare/0.4.3...HEAD
+[Unreleased]: https://github.com/kplindegaard/smbus2/compare/0.5.0...HEAD
+[0.5.0]: https://github.com/kplindegaard/smbus2/compare/0.4.3...0.5.0
 [0.4.3]: https://github.com/kplindegaard/smbus2/compare/0.4.2...0.4.3
 [0.4.2]: https://github.com/kplindegaard/smbus2/compare/0.4.1...0.4.2
 [0.4.1]: https://github.com/kplindegaard/smbus2/compare/0.4.0...0.4.1
