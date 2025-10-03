@@ -153,6 +153,9 @@ class i2c_smbus_ioctl_data(Structure):
 
 class i2c_msg(Structure):
     """
+    Represents a single I2C message for read or write operations.
+    This is the expected data container for :py:meth:`SMBus.i2c_rdwr`.
+
     As defined in ``i2c.h``.
     """
     _fields_ = [
@@ -212,7 +215,7 @@ class i2c_msg(Structure):
         :param address: Slave address.
         :type address: int
         :param buf: Bytes to write. Either list of values or str.
-        :type buf: list
+        :type buf: bytes or str or list
         :return: New :py:class:`i2c_msg` instance for write operation.
         :rtype: :py:class:`i2c_msg`
         """
@@ -247,7 +250,7 @@ class i2c_rdwr_ioctl_data(Structure):
         be called with ``ioctl(fd, I2C_RDWR, data)``.
 
         :param i2c_msg_instances: Up to 42 i2c_msg instances
-        :rtype: i2c_rdwr_ioctl_data
+        :rtype: :py:class:`i2c_rdwr_ioctl_data`
         """
         n_msg = len(i2c_msg_instances)
         msg_array = (i2c_msg * n_msg)(*i2c_msg_instances)
@@ -261,6 +264,9 @@ class i2c_rdwr_ioctl_data(Structure):
 
 
 class SMBus(object):
+    """
+    Main class for I2C and SMBus communication, providing all IO functions for device access.
+    """
 
     def __init__(self, bus=None, force=False):
         """
@@ -270,9 +276,8 @@ class SMBus(object):
             or an absolute file path (e.g. `/dev/i2c-42`).
             If not given, a subsequent  call to ``open()`` is required.
         :type bus: int or str
-        :param force: force using the slave address even when driver is
-            already using it.
-        :type force: boolean
+        :param force: Use slave address even when driver is already using it.
+        :type force: bool
         """
         self.fd = None
         self.funcs = I2cFunc(0)
@@ -329,7 +334,7 @@ class SMBus(object):
         Enable/Disable PEC (Packet Error Checking) - SMBus 1.1 and later
 
         :param enable:
-        :type enable: Boolean
+        :type enable: bool
         """
         if not (self.funcs & I2cFunc.SMBUS_PEC):
             raise IOError('SMBUS_PEC is not a feature')
@@ -345,8 +350,8 @@ class SMBus(object):
 
         :param address:
         :type address: int
-        :param force:
-        :type force: Boolean
+        :param force: Use slave address even when driver is already using it.
+        :type force: bool
         """
         force = force if force is not None else self.force
         if self.address != address or self._force_last != force:
@@ -372,8 +377,8 @@ class SMBus(object):
         Perform quick transaction. Throws IOError if unsuccessful.
         :param i2c_addr: i2c address
         :type i2c_addr: int
-        :param force:
-        :type force: Boolean
+        :param force: Use slave address even when driver is already using it.
+        :type force: bool
         """
         self._set_address(i2c_addr, force=force)
         msg = i2c_smbus_ioctl_data.create(
@@ -387,8 +392,8 @@ class SMBus(object):
         :rtype: int
         :param i2c_addr: i2c address
         :type i2c_addr: int
-        :param force:
-        :type force: Boolean
+        :param force: Use slave address even when driver is already using it.
+        :type force: bool
         :return: Read byte value
         """
         self._set_address(i2c_addr, force=force)
@@ -406,8 +411,8 @@ class SMBus(object):
         :type i2c_addr: int
         :param value: value to write
         :type value: int
-        :param force:
-        :type force: Boolean
+        :param force: Use slave address even when driver is already using it.
+        :type force: bool
         """
         self._set_address(i2c_addr, force=force)
         msg = i2c_smbus_ioctl_data.create(
@@ -423,8 +428,8 @@ class SMBus(object):
         :type i2c_addr: int
         :param register: Register to read
         :type register: int
-        :param force:
-        :type force: Boolean
+        :param force: Use slave address even when driver is already using it.
+        :type force: bool
         :return: Read byte value
         :rtype: int
         """
@@ -445,8 +450,8 @@ class SMBus(object):
         :type register: int
         :param value: Byte value to transmit
         :type value: int
-        :param force:
-        :type force: Boolean
+        :param force: Use slave address even when driver is already using it.
+        :type force: bool
         :rtype: None
         """
         self._set_address(i2c_addr, force=force)
@@ -464,8 +469,8 @@ class SMBus(object):
         :type i2c_addr: int
         :param register: Register to read
         :type register: int
-        :param force:
-        :type force: Boolean
+        :param force: Use slave address even when driver is already using it.
+        :type force: bool
         :return: 2-byte word
         :rtype: int
         """
@@ -486,8 +491,8 @@ class SMBus(object):
         :type register: int
         :param value: Word value to transmit
         :type value: int
-        :param force:
-        :type force: Boolean
+        :param force: Use slave address even when driver is already using it.
+        :type force: bool
         :rtype: None
         """
         self._set_address(i2c_addr, force=force)
@@ -507,8 +512,8 @@ class SMBus(object):
         :type register: int
         :param value: Word value to transmit
         :type value: int
-        :param force:
-        :type force: Boolean
+        :param force: Use slave address even when driver is already using it.
+        :type force: bool
         :rtype: int
         """
         self._set_address(i2c_addr, force=force)
@@ -527,8 +532,8 @@ class SMBus(object):
         :type i2c_addr: int
         :param register: Start register
         :type register: int
-        :param force:
-        :type force: Boolean
+        :param force: Use slave address even when driver is already using it.
+        :type force: bool
         :return: List of bytes
         :rtype: list
         """
@@ -550,8 +555,8 @@ class SMBus(object):
         :type register: int
         :param data: List of bytes
         :type data: list
-        :param force:
-        :type force: Boolean
+        :param force: Use slave address even when driver is already using it.
+        :type force: bool
         :rtype: None
         """
         length = len(data)
@@ -576,8 +581,8 @@ class SMBus(object):
         :type register: int
         :param data: List of bytes
         :type data: list
-        :param force:
-        :type force: Boolean
+        :param force: Use slave address even when driver is already using it.
+        :type force: bool
         :return: List of bytes
         :rtype: list
         """
@@ -604,8 +609,8 @@ class SMBus(object):
         :type register: int
         :param length: Desired block length
         :type length: int
-        :param force:
-        :type force: Boolean
+        :param force: Use slave address even when driver is already using it.
+        :type force: bool
         :return: List of bytes
         :rtype: list
         """
@@ -629,8 +634,8 @@ class SMBus(object):
         :type register: int
         :param data: List of bytes
         :type data: list
-        :param force:
-        :type force: Boolean
+        :param force: Use slave address even when driver is already using it.
+        :type force: bool
         :rtype: None
         """
         length = len(data)
