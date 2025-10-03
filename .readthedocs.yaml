@@ -9,5 +9,11 @@ build:
   tools:
     python: "3.12"
 
+python:
+  install:
+    - method: pip
+      path: .
+    - requirements: doc/requirements.txt
+
 sphinx:
   configuration: doc/conf.py
