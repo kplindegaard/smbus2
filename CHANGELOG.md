@@ -2,6 +2,10 @@
 Notable changes to the smbus2 project are recorded here.
 
 ## [Unreleased]
+
+## [0.6.0] - 2025-12-20
+### General
+- Python 3.14 added.
 ### Fixed
 - Fix `SystemError: buffer overflow` on Python 3.14+ on 64-bit systems by using `c_ulong` instead of `c_uint32` for `I2C_FUNCS` ioctl. [#124](https://github.com/kplindegaard/smbus2/issues/124).
 
@@ -108,7 +112,8 @@ with SMBus(1) as bus:
 First published version.
 
 
-[Unreleased]: https://github.com/kplindegaard/smbus2/compare/0.5.0...HEAD
+[Unreleased]: https://github.com/kplindegaard/smbus2/compare/0.6.0...HEAD
+[0.6.0]: https://github.com/kplindegaard/smbus2/compare/0.5.0...0.6.0
 [0.5.0]: https://github.com/kplindegaard/smbus2/compare/0.4.3...0.5.0
 [0.4.3]: https://github.com/kplindegaard/smbus2/compare/0.4.2...0.4.3
 [0.4.2]: https://github.com/kplindegaard/smbus2/compare/0.4.1...0.4.2
