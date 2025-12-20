@@ -23,7 +23,7 @@
 import os
 import sys
 from fcntl import ioctl
-from ctypes import c_uint32, c_uint8, c_uint16, c_char, POINTER, Structure, Array, Union, create_string_buffer, string_at
+from ctypes import c_uint32, c_uint8, c_uint16, c_ulong, c_char, POINTER, Structure, Array, Union, create_string_buffer, string_at
 
 
 # Commands from uapi/linux/i2c-dev.h
@@ -364,11 +364,15 @@ class SMBus(object):
 
     def _get_funcs(self):
         """
-        Returns a 32-bit value stating supported I2C functions.
+        Returns a value stating supported I2C functions.
 
         :rtype: int
         """
-        f = c_uint32()
+        # Use c_ulong to match the kernel's expected "unsigned long *" type.
+        # This is 4 bytes on 32-bit systems and 8 bytes on 64-bit systems.
+        # Using c_uint32 on 64-bit systems causes buffer overflow errors
+        # in Python 3.14+ due to stricter ctypes buffer size checks.
+        f = c_ulong()
         ioctl(self.fd, I2C_FUNCS, f)
         return f.value
 

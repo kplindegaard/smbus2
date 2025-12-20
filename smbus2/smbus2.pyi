@@ -2,7 +2,7 @@ from enum import IntFlag
 from typing import Optional, Sequence, List, Type, SupportsBytes, Iterable
 from typing import Union as _UnionT
 from types import TracebackType
-from ctypes import c_uint32, c_uint8, c_uint16, pointer, Structure, Array, Union
+from ctypes import c_uint32, c_uint8, c_uint16, c_ulong, pointer, Structure, Array, Union
 
 I2C_SLAVE: int
 I2C_SLAVE_FORCE: int
