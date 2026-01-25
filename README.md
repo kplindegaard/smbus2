@@ -38,7 +38,7 @@ Currently supported features are:
 * block_process_call
 * i2c_rdwr - *combined write/read transactions with repeated start*
 
-It is developed on Python 2.7 but works without any modifications in Python 3.X too.
+It is developed for Python 3.
 
 More information about updates and general changes are recorded in the [change log](https://github.com/kplindegaard/smbus2/blob/master/CHANGELOG.md).
 

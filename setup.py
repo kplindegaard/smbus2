@@ -40,6 +40,7 @@ setup(
     package_data={'smbus2': ['py.typed', 'smbus2.pyi']},
     long_description=README,
     long_description_content_type="text/markdown",
+    requires_python=">=3.7",
     extras_require={
         'docs': [
             'sphinx >= 1.5.3'
@@ -52,10 +53,7 @@ setup(
         "Development Status :: 4 - Beta",
         "Topic :: Utilities",
         "License :: OSI Approved :: MIT License",
-        "Programming Language :: Python :: 2",
-        "Programming Language :: Python :: 2.7",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
