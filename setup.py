@@ -42,7 +42,8 @@ setup(
     long_description_content_type="text/markdown",
     extras_require={
         'docs': [
-            'sphinx >= 1.5.3'
+            'sphinx >= 7',
+            'sphinx-rtd-theme',
         ],
         'qa': [
             'flake8'
