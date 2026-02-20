@@ -187,18 +187,18 @@ for k in range(msg.len):
 
 From [PyPi](https://pypi.org/) with `pip`:
 
-```
+```bash
 pip install smbus2
 ```
 
 From [conda-forge](https://anaconda.org/conda-forge) using `conda`:
 
-```
+```bash
 conda install -c conda-forge smbus2
 ```
 
 Installation from source code is straight forward:
 
-```
+```bash
 python setup.py install
 ```
