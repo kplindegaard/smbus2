@@ -6,7 +6,7 @@ A drop-in replacement for smbus-cffi/smbus-python in pure Python
 ![CodeQL](https://github.com/kplindegaard/smbus2/actions/workflows/codeql-analysis.yml/badge.svg?branch=master)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=kplindegaard_smbus2&metric=alert_status)](https://sonarcloud.io/dashboard?id=kplindegaard_smbus2)
 
-![Python Verions](https://img.shields.io/pypi/pyversions/smbus2.svg)
+![Python Versions](https://img.shields.io/pypi/pyversions/smbus2.svg)
 [![PyPi Version](https://img.shields.io/pypi/v/smbus2.svg)](https://pypi.org/project/smbus2/)
 [![PyPI - Downloads](https://img.shields.io/pypi/dm/smbus2)](https://pypi.org/project/smbus2/)
 
