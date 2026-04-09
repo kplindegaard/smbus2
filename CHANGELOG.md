@@ -3,6 +3,10 @@ Notable changes to the smbus2 project are recorded here.
 
 ## [Unreleased]
 
+## [0.6.1] - 2026-04-09
+### General
+- Docs and CI updates.
+
 ## [0.6.0] - 2025-12-20
 ### General
 - Python 3.14 added.
@@ -112,7 +116,8 @@ with SMBus(1) as bus:
 First published version.
 
 
-[Unreleased]: https://github.com/kplindegaard/smbus2/compare/0.6.0...HEAD
+[Unreleased]: https://github.com/kplindegaard/smbus2/compare/0.6.1...HEAD
+[0.6.1]: https://github.com/kplindegaard/smbus2/compare/0.6.0...0.6.1
 [0.6.0]: https://github.com/kplindegaard/smbus2/compare/0.5.0...0.6.0
 [0.5.0]: https://github.com/kplindegaard/smbus2/compare/0.4.3...0.5.0
 [0.4.3]: https://github.com/kplindegaard/smbus2/compare/0.4.2...0.4.3
