@@ -12,12 +12,12 @@ A drop-in replacement for smbus-cffi/smbus-python in pure Python
 
 # Introduction
 
-smbus2 is (yet another) pure Python implementation of the [python-smbus](http://www.lm-sensors.org/browser/i2c-tools/trunk/py-smbus/) package.
+smbus2 is a pure Python, drop-in replacement for the `python-smbus` / `python3-smbus` Linux SMBus bindings.
 
-It was designed from the ground up with two goals in mind:
+It was designed with two goals in mind:
 
-1. It should be a drop-in replacement of smbus. The syntax shall be the same.
-2. Use the inherent i2c structs and unions to a greater extent than other pure Python implementations like [pysmbus](https://github.com/bjornt/pysmbus) does. By doing so, it will be more feature complete and easier to extend.
+1. Provide an interface that is familiar to users of `smbus`.
+2. Support more complete Linux I2C/SMBus functionality, including features such as `i2c_rdwr`.
 
 Currently supported features are:
 
