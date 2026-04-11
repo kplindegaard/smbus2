@@ -21,6 +21,7 @@ Packet Error Checking (PEC).
 | [[Tips and Tricks]] | Community-sourced recipes for common tasks |
 | [[Troubleshooting]] | Diagnosing runtime errors by error type |
 | [[FAQ]] | Short answers to frequently asked questions |
+| [[References]] | Official SMBus/I2C specs, Linux kernel headers, and related tools |
 
 ## Getting Started
 

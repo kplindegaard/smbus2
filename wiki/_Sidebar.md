@@ -8,3 +8,4 @@
 - [[Tips and Tricks]]
 - [[Troubleshooting]]
 - [[FAQ]]
+- [[References]]

@@ -87,3 +87,8 @@ method names are identical.  The only required change in existing code is the im
 statement (see example above).  smbus2 additionally exposes `i2c_rdwr`, PEC support,
 `I2cFunc` capability flags, and named-bus support — features that are absent from
 `python-smbus`.
+
+## Further Reading
+
+For the authoritative SMBus and I2C specifications, Linux kernel header definitions, and
+related user-space tools, see [[References]].
