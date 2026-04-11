@@ -28,4 +28,6 @@ with SMBus(1) as bus:
     print(value)
 ```
 
+smbus2 is released under the [MIT License](https://github.com/kplindegaard/smbus2/blob/master/LICENSE).
+
 See [[Installation]] for system prerequisites and [[Operations]] for the full API reference.
