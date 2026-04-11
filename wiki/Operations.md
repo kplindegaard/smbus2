@@ -7,8 +7,6 @@ All examples assume the following imports unless stated otherwise:
 from smbus2 import SMBus, i2c_msg, I2cFunc
 ```
 
----
-
 ## Opening and Closing the Bus
 
 ### By Bus Number
@@ -56,8 +54,6 @@ bus.open(1)        # re-open
 # ...
 bus.close()
 ```
-
----
 
 ## SMBus Read Operations
 
@@ -121,8 +117,6 @@ with SMBus(1) as bus:
 > Maximum `length` is 32, as imposed by the Linux SMBus implementation.
 > For larger transfers use [`i2c_rdwr`](#combined-transactions-with-i2c_rdwr).
 
----
-
 ## SMBus Write Operations
 
 ### `write_byte(addr, value)` — Write a byte without a register address
@@ -173,8 +167,6 @@ device is present ([#7](https://github.com/kplindegaard/smbus2/issues/7)).
 with SMBus(1) as bus:
     bus.write_quick(0x50)
 ```
-
----
 
 ## Combined Transactions with `i2c_rdwr`
 
@@ -238,8 +230,6 @@ for k in range(msg.len):
     print(msg.buf[k])
 ```
 
----
-
 ## PEC — Packet Error Checking
 
 Enable PEC on the bus object before performing operations:
@@ -252,8 +242,6 @@ with SMBus(1) as bus:
 ```
 
 Set `bus.pec = 0` to disable.  Not all I2C adapters and devices support PEC.
-
----
 
 ## Querying Adapter Capabilities
 
@@ -291,8 +279,6 @@ with SMBus(1) as bus:
     else:
         print("10-bit addressing is NOT supported")
 ```
-
----
 
 ## Process Call and Block Process Call
 

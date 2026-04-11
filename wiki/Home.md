@@ -10,24 +10,11 @@ It wraps the Linux kernel's I2C/SMBus `ioctl` interface directly — no C extens
 familiar `smbus` API with additional functionality such as combined read/write transactions (`i2c_rdwr`) and
 Packet Error Checking (PEC).
 
-## Quick Navigation
-
-| Page | Description |
-|------|-------------|
-| [[Introduction]] | What smbus2 does, platform support, supported operations |
-| [[Installation]] | pip, conda, source install and system prerequisites |
-| [[Operations]] | Full API reference with code examples |
-| [[Best Practices]] | Patterns for reliable, maintainable I2C code |
-| [[Tips and Tricks]] | Community-sourced recipes for common tasks |
-| [[Troubleshooting]] | Diagnosing runtime errors by error type |
-| [[FAQ]] | Short answers to frequently asked questions |
-| [[References]] | Official SMBus/I2C specs, Linux kernel headers, and related tools |
+Use the sidebar to navigate the wiki.
 
 ## Getting Started
 
-Install from PyPI and open a bus in three lines:
-
-```python
+```bash
 pip install smbus2
 ```
 
@@ -39,4 +26,4 @@ with SMBus(1) as bus:
     print(value)
 ```
 
-See [[Operations]] for the full API and [[Installation]] for system prerequisites.
+See [[Installation]] for system prerequisites and [[Operations]] for the full API reference.

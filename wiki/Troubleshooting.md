@@ -2,8 +2,6 @@
 
 Diagnose and fix common runtime errors.  Entries are organised by error type.
 
----
-
 ## `OSError: [Errno 121] Remote I/O error`
 
 **Cause:** The slave device did not acknowledge (ACK) the I2C address or a data byte.
@@ -34,8 +32,6 @@ This is almost always caused by:
    bus.i2c_rdwr(write, read)
    ```
 
----
-
 ## `OSError: [Errno 5] Input/output error`
 
 **Cause:** A bus-level error — the slave NAK'd a data byte (not just the address),
@@ -52,8 +48,6 @@ stretching to complete.
 - Check `dmesg | grep i2c` for `sendbytes: NAK bailout` messages
   ([#110](https://github.com/kplindegaard/smbus2/issues/110)).
 
----
-
 ## `ModuleNotFoundError: No module named 'fcntl'`
 
 **Cause:** `fcntl` is a Linux-only standard library module.  smbus2 imports it at
@@ -63,8 +57,6 @@ startup and will fail with this error on Windows or macOS
 **Resolution:** smbus2 **only runs on Linux**.  There is no supported workaround for
 other operating systems.  If you need I2C access on macOS or Windows, consider hardware
 bridges such as CP2112 or MCP2221 with their respective vendor Python libraries.
-
----
 
 ## `ImportError: cannot import name 'ic_msg'`
 
@@ -82,8 +74,6 @@ from smbus2 import SMBus, ic_msg
 from smbus2 import SMBus, i2c_msg
 ```
 
----
-
 ## `SystemError: buffer overflow` (Python 3.14+)
 
 **Cause:** On Python 3.14+ running on 64-bit systems, the `I2C_FUNCS` ioctl used
@@ -97,8 +87,6 @@ buffer overflow
 ```bash
 pip install --upgrade smbus2
 ```
-
----
 
 ## Reads Return Unexpected Values or Incorrect Data
 
@@ -119,8 +107,6 @@ pip install --upgrade smbus2
 - **Signed vs. unsigned** — all values are returned unsigned; convert with `ctypes` if
   needed; see [[Tips and Tricks#signed-integer-conversion]].
 
----
-
 ## Very Slow Reads (`read_byte_data`, `read_i2c_block_data`)
 
 **Cause:** smbus2 itself adds negligible overhead.  Slowness is almost always caused by:
@@ -137,8 +123,6 @@ pip install --upgrade smbus2
   address (use with caution — bypasses driver safety).
 - Reduce the I2C clock speed so the device has more time per bit.
 - For high-throughput scenarios consider batching reads with `i2c_rdwr`.
-
----
 
 ## `SMBusWrapper` Removed (v0.4.0+)
 

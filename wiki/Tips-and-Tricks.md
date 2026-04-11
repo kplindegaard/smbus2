@@ -3,8 +3,6 @@
 Community-sourced recipes for common tasks.  Many of these originate from questions
 raised in the issue tracker.
 
----
-
 ## Signed Integer Conversion
 
 smbus2 always returns **unsigned** integer values, matching the raw bytes from the bus.
@@ -29,8 +27,6 @@ with SMBus(1) as bus:
     signed_word = c_int16(unsigned_word).value
 ```
 
----
-
 ## Endianness / Byte-Order Conversion
 
 `read_word_data` returns a 16-bit integer assembled by the Linux kernel following the
@@ -48,8 +44,6 @@ import struct
 raw = bus.read_word_data(0x50, 0x00)
 (big_endian_value,) = struct.unpack('>H', struct.pack('<H', raw))
 ```
-
----
 
 ## Reading Devices That Have No Register Address
 
@@ -79,8 +73,6 @@ with SMBus(1) as bus:
     bus.write_byte(0x40, 0x8C)    # write_byte sends only the data byte
 ```
 
----
-
 ## Write-Then-Read (Repeated Start)
 
 Many sensors require you to write a command or register-select byte and then read the
@@ -101,8 +93,6 @@ with SMBus(1) as bus:
     print(data)
 ```
 
----
-
 ## Checking Adapter Capabilities
 
 Use `bus.funcs` and the `I2cFunc` IntFlag to query what the adapter supports
@@ -120,8 +110,6 @@ with smbus2.SMBus(1) as bus:
     if funcs & smbus2.I2cFunc.SMBUS_PEC:
         print("Packet Error Checking (PEC) is supported")
 ```
-
----
 
 ## Sharing the Bus Across Multiple Modules
 
@@ -150,8 +138,6 @@ def get_bus() -> SMBus:
 For multi-threaded code, add a `threading.Lock` around each operation — see
 [[Best Practices]] for an example.
 
----
-
 ## asyncio / Async Support
 
 smbus2 itself is **synchronous**.  For `asyncio` applications, a community library
@@ -177,8 +163,6 @@ async def read_sensor():
     return value
 ```
 
----
-
 ## Setting I2C Bus Clock Speed (Baud Rate)
 
 smbus2 does **not** expose a clock-speed setting
@@ -193,8 +177,6 @@ The I2C clock is controlled at the kernel/hardware level:
 
 Clock stretching (the slave holding SCL low to pause the master) is also handled
 entirely by the kernel driver.
-
----
 
 ## Opening a Bus by File Path
 

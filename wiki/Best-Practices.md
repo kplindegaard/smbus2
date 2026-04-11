@@ -3,8 +3,6 @@
 Following these patterns will make your I2C code more reliable, easier to maintain, and
 less prone to subtle bugs.
 
----
-
 ## Always Use the Context Manager
 
 The `with SMBus(...) as bus:` pattern ensures the bus file descriptor is **always**
@@ -21,8 +19,6 @@ bus = SMBus(1)
 value = bus.read_byte_data(0x50, 0x00)
 bus.close()
 ```
-
----
 
 ## Do Not Create Multiple `SMBus` Instances for the Same Bus
 
@@ -46,8 +42,6 @@ def safe_read(addr, register):
         return _bus.read_byte_data(addr, register)
 ```
 
----
-
 ## Prefer `i2c_rdwr` for Devices That Do Not Use the Register-Address Protocol
 
 Several SMBus `*_data` functions (e.g. `read_byte_data`, `write_byte_data`,
@@ -70,8 +64,6 @@ with SMBus(1) as bus:
     data = list(msg)
 ```
 
----
-
 ## Use `i2c_rdwr` to Bypass the 32-Byte SMBus Limit
 
 The Linux SMBus implementation caps block transfers at 32 bytes.  If your device
@@ -86,8 +78,6 @@ with SMBus(1) as bus:
     bus.i2c_rdwr(msg)
     data = list(msg)
 ```
-
----
 
 ## Add Small Delays Between Operations on Slow Devices
 
@@ -109,8 +99,6 @@ with SMBus(1) as bus:
 
 The required delay varies by device; consult the datasheet.
 
----
-
 ## Prefer `write_byte` / `read_byte` for Devices With No Register Concept
 
 For devices that accept a single command byte or return a single byte without any
@@ -122,8 +110,6 @@ with SMBus(1) as bus:
     bus.write_byte(0x40, 0xAC)        # send command 0xAC
     response = bus.read_byte(0x40)    # read one byte response
 ```
-
----
 
 ## Handle `OSError` Gracefully
 
