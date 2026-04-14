@@ -1,8 +1,17 @@
 smbus2
 ======
 
+.. image:: https://img.shields.io/badge/GitHub-kplindegaard%2Fsmbus2-blue?logo=github
+   :target: https://github.com/kplindegaard/smbus2
+
 .. image:: https://github.com/kplindegaard/smbus2/actions/workflows/python-build-test.yml/badge.svg?branch=master
    :target: https://github.com/kplindegaard/smbus2/actions/workflows/python-build-test.yml
+
+.. image:: https://github.com/kplindegaard/smbus2/actions/workflows/codeql-analysis.yml/badge.svg?branch=master
+   :target: https://github.com/kplindegaard/smbus2/actions/workflows/codeql-analysis.yml
+
+.. image:: https://readthedocs.org/projects/smbus2/badge/?version=latest
+   :target: http://smbus2.readthedocs.io/en/latest/?badge=latest
 
 .. image:: https://img.shields.io/pypi/pyversions/smbus2.svg
    :target: https://pypi.python.org/pypi/smbus2
@@ -15,18 +24,6 @@ smbus2
 interface directly — no C extension required — and extends the familiar ``smbus`` API
 with additional functionality such as combined read/write transactions (``i2c_rdwr``) and
 Packet Error Checking (PEC).
-
-.. code-block:: bash
-
-   pip install smbus2
-
-.. code-block:: python
-
-   from smbus2 import SMBus
-
-   with SMBus(1) as bus:
-       value = bus.read_byte_data(0x50, 0)
-       print(value)
 
 .. toctree::
    :maxdepth: 2
