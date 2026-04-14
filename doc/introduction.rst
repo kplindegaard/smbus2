@@ -37,33 +37,19 @@ Goals
 Platform Support
 ----------------
 
-smbus2 is a **Linux-only** library. It relies on the Linux kernel's I2C subsystem and the
+smbus2 is a Linux-only library. It relies on the Linux kernel's I2C subsystem and the
 ``/dev/i2c-N`` character devices that it exposes. The underlying ``ioctl`` calls and data
 structures (``i2c_smbus_ioctl_data``, ``i2c_rdwr_ioctl_data``, etc.) are Linux-specific.
-
-.. list-table::
-   :header-rows: 1
-   :widths: 20 15 65
-
-   * - Platform
-     - Supported
-     - Notes
-   * - Linux
-     - ✅ Yes
-     - Primary target; all features available
-   * - macOS
-     - ❌ No
-     - Lacks the Linux I2C character device subsystem
-   * - Windows
-     - ❌ No
-     - No ``fcntl`` module; no ``/dev/i2c-*`` devices (`#73 <https://github.com/kplindegaard/smbus2/issues/73>`_)
 
 Tested Python Versions
 -----------------------
 
-smbus2 currently targets **Python 3.7 and later**. Python 2.7 and 3.6 are no longer
+smbus2 currently targets Python 3.7 and later. Python 2.7 and 3.6 are no longer
 actively tested in CI (`#128 <https://github.com/kplindegaard/smbus2/issues/128>`_).
-The test matrix explicitly covers Python 3.7 through 3.14.
+
+smbus2 v0.6.1 should still work on Python 2.7 through 3.6 as there are no
+intentional incompatibilities. Use at your own risk. Support and tagging for deprecated
+Python versions will be removed in the future.
 
 Supported Hardware
 ------------------

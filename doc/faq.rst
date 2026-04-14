@@ -83,14 +83,6 @@ lead to unexpected errors. Share a single ``SMBus`` instance across your code; u
 See `#75 <https://github.com/kplindegaard/smbus2/issues/75>`_ and
 :ref:`do-not-create-multiple-smbus-instances-for-the-same-bus`.
 
-What happened to ``SMBusWrapper``?
-------------------------------------
-
-It was deprecated in v0.3.0 and removed in v0.4.0. Replace it with ``SMBus``, which
-supports the same context-manager protocol (``with SMBus(1) as bus:``).
-See `#78 <https://github.com/kplindegaard/smbus2/issues/78>`_ and
-:ref:`migrating-from-smbuswrapper`.
-
 How do I convert a raw unsigned value to a signed integer?
 -----------------------------------------------------------
 

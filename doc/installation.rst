@@ -26,8 +26,8 @@ smbus2 requires:
 
   Alternatively, run with ``sudo`` (not recommended for production).
 
-From PyPI (Recommended)
------------------------
+From PyPI
+---------
 
 .. code-block:: bash
 
@@ -35,6 +35,9 @@ From PyPI (Recommended)
 
 Installs the latest stable release. Use a virtual environment to avoid polluting the
 system Python environment.
+
+uv users can use ``uv add smbus2`` (uv-managed projects) or
+``uv pip install smbus2``.
 
 From conda-forge
 ----------------
@@ -74,26 +77,4 @@ You can also verify that your I2C bus is accessible:
    with SMBus(1) as bus:
        print("Bus opened successfully")
 
-.. _migrating-from-smbuswrapper:
 
-Migrating from ``SMBusWrapper``
---------------------------------
-
-The ``SMBusWrapper`` class was **removed in v0.4.0**. Replace all uses with ``SMBus``
-directly — ``SMBus`` gained full context-manager support (``__enter__`` / ``__exit__``) at
-the same time:
-
-.. code-block:: python
-
-   # No longer valid (raises ImportError in v0.4.0+)
-   from smbus2 import SMBusWrapper
-   with SMBusWrapper(1) as bus:
-       ...
-
-   # Correct replacement
-   from smbus2 import SMBus
-   with SMBus(1) as bus:
-       ...
-
-See the `CHANGELOG <https://github.com/kplindegaard/smbus2/blob/master/CHANGELOG.md>`_
-for the full v0.4.0 release notes.

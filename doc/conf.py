@@ -54,7 +54,7 @@ master_doc = 'index'
 # General information about the project.
 project = 'smbus2'
 author = 'Karl-Petter Lindegaard'
-copyright = '2017, {}'.format(author)
+copyright = '2017-2026, {}'.format(author)
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
