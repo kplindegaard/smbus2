@@ -11,7 +11,7 @@ from smbus2 import SMBus, i2c_msg, I2cFunc
 
 ### By Bus Number
 
-Pass the integer index of the I2C adapter.  `SMBus(1)` opens `/dev/i2c-1`.
+Pass the integer index of the I2C adapter. `SMBus(1)` opens `/dev/i2c-1`.
 
 ```python
 bus = SMBus(1)
@@ -31,7 +31,7 @@ bus.close()
 
 ### Using the Context Manager (Recommended)
 
-The context manager ensures the bus is **always** closed, even when an exception occurs.
+The context manager ensures the bus is always closed, even when an exception occurs.
 This is the preferred pattern:
 
 ```python
@@ -59,7 +59,7 @@ bus.close()
 
 ### `read_byte(addr)` — Read a byte without a register address
 
-Reads a single byte from the device.  No register/offset is written first.
+Reads a single byte from the device. No register/offset is written first.
 
 ```python
 with SMBus(1) as bus:
@@ -79,7 +79,7 @@ with SMBus(1) as bus:
 
 ### `read_word_data(addr, register)` — Read a 16-bit word from a register
 
-Writes `register`, then reads two bytes.  The value is returned as a Python `int`.
+Writes `register`, then reads two bytes. The value is returned as a Python `int`.
 
 ```python
 with SMBus(1) as bus:
@@ -87,14 +87,16 @@ with SMBus(1) as bus:
     print(hex(word))
 ```
 
-> **Note on endianness:** The SMBus spec transfers the low byte first (little-endian).
-> The Linux kernel assembles the two bytes accordingly, so the returned integer matches
-> the device datasheet for most sensors.  If your device uses big-endian word order, swap
-> manually — see [[Tips and Tricks#endianness--byte-order-conversion]].
+:::{note}
+**Endianness:** The SMBus spec transfers the low byte first (little-endian).
+The Linux kernel assembles the two bytes accordingly, so the returned integer matches
+the device datasheet for most sensors. If your device uses big-endian word order, swap
+manually — see {ref}`endianness-byte-order-conversion`.
+:::
 
 ### `read_block_data(addr, register)` — Read an SMBus block
 
-The device sends a length byte followed by up to 32 data bytes.  Returns a list.
+The device sends a length byte followed by up to 32 data bytes. Returns a list.
 
 ```python
 with SMBus(1) as bus:
@@ -102,8 +104,10 @@ with SMBus(1) as bus:
     print(data)
 ```
 
-> **Note:** This command is normally not supported by pure I2C devices that lack an
-> SMBus-compliant block-read implementation.
+:::{note}
+This command is normally not supported by pure I2C devices that lack an
+SMBus-compliant block-read implementation.
+:::
 
 ### `read_i2c_block_data(addr, register, length)` — Read up to 32 bytes from a register
 
@@ -114,8 +118,10 @@ with SMBus(1) as bus:
     print(data)  # list of 16 integers
 ```
 
-> Maximum `length` is 32, as imposed by the Linux SMBus implementation.
-> For larger transfers use [`i2c_rdwr`](#combined-transactions-with-i2c_rdwr).
+:::{note}
+Maximum `length` is 32, as imposed by the Linux SMBus implementation.
+For larger transfers use {ref}`combined-transactions-with-i2c-rdwr`.
+:::
 
 ## SMBus Write Operations
 
@@ -155,12 +161,14 @@ with SMBus(1) as bus:
     bus.write_i2c_block_data(0x50, 0x00, data)
 ```
 
-> Writing large blocks can be unreliable on some hardware.  If you observe errors, split
-> the transfer into smaller chunks and add a short `time.sleep()` between them.
+:::{note}
+Writing large blocks can be unreliable on some hardware. If you observe errors, split
+the transfer into smaller chunks and add a short `time.sleep()` between them.
+:::
 
 ### `write_quick(addr)` — SMBus Quick Command
 
-Sends the device address with the R/W bit only — no data byte.  Used to probe whether a
+Sends the device address with the R/W bit only — no data byte. Used to probe whether a
 device is present ([#7](https://github.com/kplindegaard/smbus2/issues/7)).
 
 ```python
@@ -168,10 +176,11 @@ with SMBus(1) as bus:
     bus.write_quick(0x50)
 ```
 
+(combined-transactions-with-i2c-rdwr)=
 ## Combined Transactions with `i2c_rdwr`
 
 `i2c_rdwr` performs one or more I2C messages in a **single kernel ioctl call** with
-repeated-start semantics between messages (no STOP between them).  This enables two key
+repeated-start semantics between messages (no STOP between them). This enables two key
 scenarios that standard SMBus commands cannot handle:
 
 1. **Transfers larger than 32 bytes** — the SMBus block limit does not apply.
@@ -180,8 +189,10 @@ scenarios that standard SMBus commands cannot handle:
 
 Each message is an `i2c_msg` object created with `i2c_msg.write()` or `i2c_msg.read()`.
 
-> **Important:** `i2c_rdwr` has **no return value**.  Read data is stored in the
-> `i2c_msg` object itself.  Access it via `list(msg)`, iteration, or `msg.buf`.
+:::{important}
+`i2c_rdwr` has no return value. Read data is stored in the
+`i2c_msg` object itself. Access it via `list(msg)`, iteration, or `msg.buf`.
+:::
 
 ### Single write message
 
@@ -241,7 +252,7 @@ with SMBus(1) as bus:
     print(value)
 ```
 
-Set `bus.pec = 0` to disable.  Not all I2C adapters and devices support PEC.
+Set `bus.pec = 0` to disable. Not all I2C adapters and devices support PEC.
 
 ## Querying Adapter Capabilities
 
@@ -302,5 +313,7 @@ with SMBus(1) as bus:
     print(response)
 ```
 
-> **Note:** Block process call is normally not supported by pure I2C devices; it requires
-> an SMBus-compliant implementation in the slave.
+:::{note}
+Block process call is normally not supported by pure I2C devices; it requires
+an SMBus-compliant implementation in the slave.
+:::

@@ -5,7 +5,7 @@
 smbus2 requires:
 
 - **Linux** — the library uses Linux-specific `ioctl` calls and `/dev/i2c-*` devices.
-- **I2C kernel support** — the `i2c-dev` kernel module must be loaded.  On most
+- **I2C kernel support** — the `i2c-dev` kernel module must be loaded. On most
   distributions this is either built in or can be loaded with:
 
   ```bash
@@ -15,7 +15,7 @@ smbus2 requires:
   To load it automatically at boot, add `i2c-dev` to `/etc/modules`.
 
 - **Device permissions** — the user running your Python script must have read/write
-  access to `/dev/i2c-*`.  The easiest way is to add the user to the `i2c` group:
+  access to `/dev/i2c-*`. The easiest way is to add the user to the `i2c` group:
 
   ```bash
   sudo usermod -aG i2c $USER
@@ -24,14 +24,19 @@ smbus2 requires:
 
   Alternatively, run with `sudo` (not recommended for production).
 
-## From PyPI (Recommended)
+## From PyPI
 
 ```bash
 pip install smbus2
 ```
 
-Installs the latest stable release.  Use a virtual environment to avoid polluting the
+Installs the latest stable release. Use a virtual environment to avoid polluting the
 system Python environment.
+
+:::{note}
+uv users can use `uv add smbus2` (uv-managed projects) or
+`uv pip install smbus2` (ad-hoc virtual environments).
+:::
 
 ## From conda-forge
 
@@ -67,24 +72,3 @@ from smbus2 import SMBus
 with SMBus(1) as bus:
     print("Bus opened successfully")
 ```
-
-## Migrating from `SMBusWrapper`
-
-The `SMBusWrapper` class was **removed in v0.4.0**.  Replace all uses with `SMBus`
-directly — `SMBus` gained full context-manager support (`__enter__` / `__exit__`) at
-the same time:
-
-```python
-# No longer valid (raises ImportError in v0.4.0+)
-from smbus2 import SMBusWrapper
-with SMBusWrapper(1) as bus:
-    ...
-
-# Correct replacement
-from smbus2 import SMBus
-with SMBus(1) as bus:
-    ...
-```
-
-See the [CHANGELOG](https://github.com/kplindegaard/smbus2/blob/master/CHANGELOG.md) for
-the full v0.4.0 release notes.

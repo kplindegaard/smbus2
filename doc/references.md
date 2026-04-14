@@ -1,21 +1,15 @@
 # References
 
 This page collects the authoritative technical documents, Linux kernel sources, and
-related tools that underpin smbus2.  They are useful background reading when you need
+related tools that underpin smbus2. They are useful background reading when you need
 to understand what happens at the protocol or kernel level.
 
-## SMBus Protocol Specification
+## SMBus and I²C Specifications
 
-| Document | Description |
+| Resource | Description |
 |----------|-------------|
-| [System Management Bus (SMBus) Specification, Version 3.2 (2021)](https://smbus.org/specs/SMBus_3_2_20220112.pdf) | The primary SMBus protocol specification published by the SBS Implementers Forum.  Defines the electrical characteristics, command set (Quick Command, Send/Receive Byte, Read/Write Byte Data, Word Data, Block Data, Process Call, Block Process Call, Host Notify), Packet Error Checking (PEC), and Address Resolution Protocol (ARP). |
-| [SMBus specification archive at smbus.org](https://smbus.org/specs/) | Index of all published SMBus specification revisions (1.0 through 3.2) for historical reference. |
-
-## I²C Specification
-
-| Document | Description |
-|----------|-------------|
-| [UM10204 — I²C-bus specification and user manual, Rev. 7.0 (2021)](https://www.nxp.com/docs/en/user-guide/UM10204.pdf) | The authoritative NXP/Philips I²C specification.  Defines the physical layer, START/STOP conditions, repeated-start, clock stretching, 7-bit and 10-bit addressing, and multi-master arbitration. |
+| [SMBus specification archive at smbus.org](https://smbus.org/specs/) | Index of all published SMBus specification revisions. |
+| [UM10204 — I²C-bus specification and user manual, Rev. 7.0 (2021)](https://www.nxp.com/docs/en/user-guide/UM10204.pdf) | The authoritative NXP/Philips I²C specification. Defines the physical layer, START/STOP conditions, repeated-start, clock stretching, 7-bit and 10-bit addressing, and multi-master arbitration. |
 
 ## Linux Kernel I2C / SMBus Documentation
 
@@ -32,14 +26,14 @@ to understand what happens at the protocol or kernel level.
 ## Linux Kernel Header Files
 
 These C headers define the data structures and constants that smbus2 mirrors via
-`ctypes`.  They ship with the Linux kernel source tree and are also available in most
+`ctypes`. They ship with the Linux kernel source tree and are also available in most
 distributions' `linux-headers-*` or `kernel-headers` packages.
 
 | Header | Relevance |
 |--------|-----------|
-| [`include/uapi/linux/i2c.h`](https://github.com/torvalds/linux/blob/master/include/uapi/linux/i2c.h) | Defines `struct i2c_msg`, `I2C_M_*` message flags, and `struct i2c_rdwr_ioctl_data` — the data structure passed to `I2C_RDWR`. |
-| [`include/uapi/linux/i2c-dev.h`](https://github.com/torvalds/linux/blob/master/include/uapi/linux/i2c-dev.h) | Defines all `ioctl` request codes for `/dev/i2c-N`: `I2C_SLAVE`, `I2C_SLAVE_FORCE`, `I2C_TENBIT`, `I2C_FUNCS`, `I2C_RDWR`, `I2C_PEC`, `I2C_SMBUS`; also defines `struct i2c_smbus_ioctl_data` and `union i2c_smbus_data`. |
-| [`include/uapi/linux/i2c-smbus.h`](https://github.com/torvalds/linux/blob/master/include/uapi/linux/i2c-smbus.h) | Defines `I2C_SMBUS_*` transaction-type constants (`I2C_SMBUS_BYTE`, `I2C_SMBUS_BYTE_DATA`, `I2C_SMBUS_WORD_DATA`, `I2C_SMBUS_BLOCK_DATA`, `I2C_SMBUS_I2C_BLOCK_DATA`, `I2C_SMBUS_PROC_CALL`, etc.) that correspond to each smbus2 method. |
+| [include/uapi/linux/i2c.h](https://github.com/torvalds/linux/blob/master/include/uapi/linux/i2c.h) | Defines `struct i2c_msg`, `I2C_M_*` message flags, and `struct i2c_rdwr_ioctl_data` — the data structure passed to `I2C_RDWR`. |
+| [include/uapi/linux/i2c-dev.h](https://github.com/torvalds/linux/blob/master/include/uapi/linux/i2c-dev.h) | Defines all `ioctl` request codes for `/dev/i2c-N`: `I2C_SLAVE`, `I2C_SLAVE_FORCE`, `I2C_TENBIT`, `I2C_FUNCS`, `I2C_RDWR`, `I2C_PEC`, `I2C_SMBUS`; also defines `struct i2c_smbus_ioctl_data` and `union i2c_smbus_data`. |
+| [include/uapi/linux/i2c-smbus.h](https://github.com/torvalds/linux/blob/master/include/uapi/linux/i2c-smbus.h) | Defines `I2C_SMBUS_*` transaction-type constants (`I2C_SMBUS_BYTE`, `I2C_SMBUS_BYTE_DATA`, `I2C_SMBUS_WORD_DATA`, `I2C_SMBUS_BLOCK_DATA`, `I2C_SMBUS_I2C_BLOCK_DATA`, `I2C_SMBUS_PROC_CALL`, etc.) that correspond to each smbus2 method. |
 
 ## i2c-tools User-Space Utilities
 
@@ -56,21 +50,22 @@ smbus2 for bus discovery and manual device interrogation.
 
 ## Python `ctypes` and `struct` References
 
-smbus2 uses `ctypes` internally to construct kernel data structures.  The tips in the
-wiki (e.g. signed-integer conversion, endianness swap) also use standard-library modules.
+smbus2 uses `ctypes` internally to construct kernel data structures. The tips in the
+documentation (e.g. signed-integer conversion, endianness swap) also use standard-library
+modules.
 
 | Reference | Description |
 |-----------|-------------|
-| [Python `ctypes` documentation](https://docs.python.org/3/library/ctypes.html) | Python's foreign-function and C-compatible type library — used by smbus2 for `ioctl` buffer layout and by users for signed-integer conversion. |
-| [Python `struct` documentation](https://docs.python.org/3/library/struct.html) | Pack/unpack bytes with format strings — useful for byte-order conversion of multi-byte sensor values. |
-| [Python `fcntl` documentation](https://docs.python.org/3/library/fcntl.html) | The Linux-only standard-library module that smbus2 uses to issue `ioctl` system calls. |
+| [Python ctypes documentation](https://docs.python.org/3/library/ctypes.html) | Python's foreign-function and C-compatible type library — used by smbus2 for `ioctl` buffer layout and by users for signed-integer conversion. |
+| [Python struct documentation](https://docs.python.org/3/library/struct.html) | Pack/unpack bytes with format strings — useful for byte-order conversion of multi-byte sensor values. |
+| [Python fcntl documentation](https://docs.python.org/3/library/fcntl.html) | The Linux-only standard-library module that smbus2 uses to issue `ioctl` system calls. |
 
 ## smbus2 Project Resources
 
 | Resource | URL |
 |----------|-----|
-| GitHub repository | <https://github.com/kplindegaard/smbus2> |
-| PyPI package | <https://pypi.org/project/smbus2/> |
-| Read the Docs (API docs) | <https://smbus2.readthedocs.io/en/latest/> |
+| GitHub repository | https://github.com/kplindegaard/smbus2 |
+| PyPI package | https://pypi.org/project/smbus2/ |
+| Read the Docs (API docs) | https://smbus2.readthedocs.io/en/latest/ |
 | Changelog | [CHANGELOG.md](https://github.com/kplindegaard/smbus2/blob/master/CHANGELOG.md) |
-| Issue tracker | <https://github.com/kplindegaard/smbus2/issues> |
+| Issue tracker | https://github.com/kplindegaard/smbus2/issues |

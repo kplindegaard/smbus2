@@ -1,6 +1,6 @@
 # Troubleshooting
 
-Diagnose and fix common runtime errors.  Entries are organised by error type.
+Diagnose and fix common runtime errors. Entries are organised by error type.
 
 ## `OSError: [Errno 121] Remote I/O error`
 
@@ -19,13 +19,16 @@ This is almost always caused by:
    4.7 kΩ to 3.3 V or 5 V, depending on the bus voltage).
 2. Scan for the device address: `i2cdetect -y 1` (replace `1` with your bus number).
 3. Check the kernel log for driver-level messages:
+
    ```bash
    dmesg | grep -i i2c
    ```
+
 4. If the device has no register-addressing concept, switch from `*_data` functions to
-   `i2c_rdwr` — see [[Best Practices#prefer-i2c_rdwr-for-devices-that-do-not-use-the-register-address-protocol]].
-5. For devices like the AHT25/DHT20, use a write-then-read pattern:
+   `i2c_rdwr` — see {ref}`prefer-i2c-rdwr-for-devices-that-do-not-use-the-register-address-protocol`.
+5. For devices like the AHT25/DHT20, use a write-then-read pattern
    ([#110](https://github.com/kplindegaard/smbus2/issues/110)):
+
    ```python
    write = i2c_msg.write(0x38, [0xac, 0x33, 0x00])
    read  = i2c_msg.read(0x38, 6)
@@ -42,37 +45,21 @@ stretching to complete.
 
 - Check pull-up resistor values (too high → marginal signalling).
 - Reduce the I2C clock speed via the kernel driver (see
-  [[Tips and Tricks#setting-i2c-bus-clock-speed-baud-rate]]).
+  {ref}`setting-i2c-bus-clock-speed-baud-rate`).
 - Add a small delay between operations — see
-  [[Best Practices#add-small-delays-between-operations-on-slow-devices]].
+  {ref}`add-small-delays-between-operations-on-slow-devices`.
 - Check `dmesg | grep i2c` for `sendbytes: NAK bailout` messages
   ([#110](https://github.com/kplindegaard/smbus2/issues/110)).
 
 ## `ModuleNotFoundError: No module named 'fcntl'`
 
-**Cause:** `fcntl` is a Linux-only standard library module.  smbus2 imports it at
+**Cause:** `fcntl` is a Linux-only standard library module. smbus2 imports it at
 startup and will fail with this error on Windows or macOS
 ([#73](https://github.com/kplindegaard/smbus2/issues/73)).
 
-**Resolution:** smbus2 **only runs on Linux**.  There is no supported workaround for
-other operating systems.  If you need I2C access on macOS or Windows, consider hardware
+**Resolution:** smbus2 **only runs on Linux**. There is no supported workaround for
+other operating systems. If you need I2C access on macOS or Windows, consider hardware
 bridges such as CP2112 or MCP2221 with their respective vendor Python libraries.
-
-## `ImportError: cannot import name 'ic_msg'`
-
-**Cause:** Typo in the import statement
-([#34](https://github.com/kplindegaard/smbus2/issues/34)).
-The class name is `i2c_msg` — lowercase `i`, the digit `2`, an underscore, then `msg`.
-
-**Resolution:**
-
-```python
-# Wrong — note the missing '2'
-from smbus2 import SMBus, ic_msg
-
-# Correct
-from smbus2 import SMBus, i2c_msg
-```
 
 ## `SystemError: buffer overflow` (Python 3.14+)
 
@@ -81,7 +68,7 @@ from smbus2 import SMBus, i2c_msg
 buffer overflow
 ([#124](https://github.com/kplindegaard/smbus2/issues/124)).
 
-**Resolution:** Upgrade smbus2 to **v0.6.0 or later**.  The fix changes the internal
+**Resolution:** Upgrade smbus2 to **v0.6.0 or later**. The fix changes the internal
 `c_uint32` to `c_ulong`, which matches the kernel's expected buffer size.
 
 ```bash
@@ -102,14 +89,13 @@ pip install --upgrade smbus2
   Use `i2c_rdwr` instead
   ([#115](https://github.com/kplindegaard/smbus2/issues/115),
   [#101](https://github.com/kplindegaard/smbus2/issues/101)).
-- **Endianness** — the word may be big-endian; see
-  [[Tips and Tricks#endianness--byte-order-conversion]].
+- **Endianness** — the word may be big-endian; see {ref}`endianness-byte-order-conversion`.
 - **Signed vs. unsigned** — all values are returned unsigned; convert with `ctypes` if
-  needed; see [[Tips and Tricks#signed-integer-conversion]].
+  needed; see {ref}`signed-integer-conversion`.
 
 ## Very Slow Reads (`read_byte_data`, `read_i2c_block_data`)
 
-**Cause:** smbus2 itself adds negligible overhead.  Slowness is almost always caused by:
+**Cause:** smbus2 itself adds negligible overhead. Slowness is almost always caused by:
 
 - The Linux kernel I2C driver (clock speed, scheduling latency).
 - Clock stretching by the slave device holding SCL low.
@@ -123,25 +109,3 @@ pip install --upgrade smbus2
   address (use with caution — bypasses driver safety).
 - Reduce the I2C clock speed so the device has more time per bit.
 - For high-throughput scenarios consider batching reads with `i2c_rdwr`.
-
-## `SMBusWrapper` Removed (v0.4.0+)
-
-**Cause:** The `SMBusWrapper` class was deprecated in v0.3.0 and **removed in v0.4.0**
-([#78](https://github.com/kplindegaard/smbus2/issues/78)).
-
-**Resolution:** Replace `SMBusWrapper` with `SMBus`:
-
-```python
-# No longer valid
-from smbus2 import SMBusWrapper
-with SMBusWrapper(1) as bus:
-    ...
-
-# Replace with
-from smbus2 import SMBus
-with SMBus(1) as bus:
-    ...
-```
-
-See the [CHANGELOG](https://github.com/kplindegaard/smbus2/blob/master/CHANGELOG.md)
-for the full v0.4.0 release notes.

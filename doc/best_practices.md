@@ -5,8 +5,8 @@ less prone to subtle bugs.
 
 ## Always Use the Context Manager
 
-The `with SMBus(...) as bus:` pattern ensures the bus file descriptor is **always**
-closed when the block exits, even if an exception is raised.  Unclosed file descriptors
+The `with SMBus(...) as bus:` pattern ensures the bus file descriptor is*always
+closed when the block exits, even if an exception is raised. Unclosed file descriptors
 can prevent other processes from accessing the bus.
 
 ```python
@@ -20,6 +20,7 @@ value = bus.read_byte_data(0x50, 0x00)
 bus.close()
 ```
 
+(do-not-create-multiple-smbus-instances-for-the-same-bus)=
 ## Do Not Create Multiple `SMBus` Instances for the Same Bus
 
 Linux serialises I2C transactions at the kernel level, but having multiple open file
@@ -27,8 +28,8 @@ descriptors for the same `/dev/i2c-N` device can lead to confusing errors and un
 interleaving of operations
 ([#75](https://github.com/kplindegaard/smbus2/issues/75)).
 
-If multiple parts of your application need bus access, share a **single** `SMBus`
-instance.  Protect it with a `threading.Lock` if accessed from multiple threads:
+If multiple parts of your application need bus access, share a single `SMBus`
+instance. Protect it with a `threading.Lock` if accessed from multiple threads:
 
 ```python
 import threading
@@ -42,6 +43,7 @@ def safe_read(addr, register):
         return _bus.read_byte_data(addr, register)
 ```
 
+(prefer-i2c-rdwr-for-devices-that-do-not-use-the-register-address-protocol)=
 ## Prefer `i2c_rdwr` for Devices That Do Not Use the Register-Address Protocol
 
 Several SMBus `*_data` functions (e.g. `read_byte_data`, `write_byte_data`,
@@ -66,7 +68,7 @@ with SMBus(1) as bus:
 
 ## Use `i2c_rdwr` to Bypass the 32-Byte SMBus Limit
 
-The Linux SMBus implementation caps block transfers at 32 bytes.  If your device
+The Linux SMBus implementation caps block transfers at 32 bytes. If your device
 supports longer I2C transfers, `i2c_rdwr` is the only way to exceed that limit
 ([#35](https://github.com/kplindegaard/smbus2/issues/35),
 [#67](https://github.com/kplindegaard/smbus2/issues/67),
@@ -79,10 +81,11 @@ with SMBus(1) as bus:
     data = list(msg)
 ```
 
+(add-small-delays-between-operations-on-slow-devices)=
 ## Add Small Delays Between Operations on Slow Devices
 
 Some I2C devices need processing time after receiving a command before they can accept
-the next one.  If you observe intermittent `OSError` or incorrect data in a tight loop,
+the next one. If you observe intermittent `OSError` or incorrect data in a tight loop,
 insert a short `time.sleep()` between operations
 ([#33](https://github.com/kplindegaard/smbus2/issues/33),
 [#36](https://github.com/kplindegaard/smbus2/issues/36)):
@@ -102,7 +105,7 @@ The required delay varies by device; consult the datasheet.
 ## Prefer `write_byte` / `read_byte` for Devices With No Register Concept
 
 For devices that accept a single command byte or return a single byte without any
-register addressing, use `write_byte` / `read_byte`.  Unlike the `*_data` variants,
+register addressing, use `write_byte` / `read_byte`. Unlike the `*_data` variants,
 these functions do **not** prepend a register/offset byte to the transaction:
 
 ```python
@@ -113,7 +116,7 @@ with SMBus(1) as bus:
 
 ## Handle `OSError` Gracefully
 
-All smbus2 operations raise `OSError` when the kernel reports an I2C error.  The `errno`
+All smbus2 operations raise `OSError` when the kernel reports an I2C error. The `errno`
 attribute identifies the specific cause:
 
 | `errno` | Meaning |
