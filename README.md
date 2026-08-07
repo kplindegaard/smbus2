@@ -37,6 +37,8 @@ Currently supported features are:
 * write_block_data
 * block_process_call
 * i2c_rdwr - *combined write/read transactions with repeated start*
+* i2c_rd - single read via `i2c_rdwr`
+* i2c_wr - single write via `i2c_rdwr`
 
 It is developed on Python 2.7 but works without any modifications in Python 3.X too.
 
@@ -140,11 +142,11 @@ with SMBus(1) as bus:
     # Read 64 bytes from address 80
     msg = i2c_msg.read(80, 64)
     bus.i2c_rdwr(msg)
-    
+
     # Write a single byte to address 80
     msg = i2c_msg.write(80, [65])
     bus.i2c_rdwr(msg)
-    
+
     # Write some bytes to address 80
     msg = i2c_msg.write(80, [65, 66, 67, 68])
     bus.i2c_rdwr(msg)
@@ -181,6 +183,29 @@ for value in msg:
 # 3: Through i2c_msg properties
 for k in range(msg.len):
     print(msg.buf[k])
+```
+
+## Example 8: Single i2c_rd
+
+```python
+from smbus2 import SMBus
+
+with SMBus(1) as bus:
+    # Read 64 bytes from address 80
+    bus.i2c_rd(80, 64)
+```
+
+## Example 9: Single i2c_wr
+
+```python
+from smbus2 import SMBus
+
+with SMBus(1) as bus:
+    # Write a single byte to address 80
+    bus.i2c_wr(80, [65])
+
+    # Write some bytes to address 80
+    bus.i2c_wr(80, [65, 66, 67, 68])
 ```
 
 # Installation instructions
