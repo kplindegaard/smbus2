@@ -6,6 +6,7 @@
 [![](https://readthedocs.org/projects/smbus2/badge/?version=latest)](http://smbus2.readthedocs.io/en/latest/?badge=latest)
 [![](https://img.shields.io/pypi/pyversions/smbus2.svg)](https://pypi.python.org/pypi/smbus2)
 [![](https://img.shields.io/pypi/v/smbus2.svg)](https://pypi.python.org/pypi/smbus2)
+[![](https://api.pepy.tech/badge/smbus2/month)](https://pypi.org/project/smbus2/)
 
 **smbus2** is a pure-Python, drop-in replacement for the `python-smbus` /
 `python3-smbus` Linux SMBus bindings. It wraps the Linux kernel's I2C/SMBus `ioctl`
