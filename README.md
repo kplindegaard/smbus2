@@ -8,7 +8,7 @@ A drop-in replacement for smbus-cffi/smbus-python in pure Python
 
 ![Python Versions](https://img.shields.io/pypi/pyversions/smbus2.svg)
 [![PyPi Version](https://img.shields.io/pypi/v/smbus2.svg)](https://pypi.org/project/smbus2/)
-[![PyPI - Downloads](https://img.shields.io/pypi/dm/smbus2)](https://pypi.org/project/smbus2/)
+[![PyPI - Downloads](https://api.pepy.tech/badge/smbus2/month)](https://pypi.org/project/smbus2/)
 
 # Introduction
 
