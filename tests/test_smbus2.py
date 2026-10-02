@@ -35,9 +35,11 @@ from smbus2 import SMBus, SMBusFreeBSD, i2c_msg, I2cFunc
 
 # Required I2C constant definitions repeated
 I2C_FUNCS = 0x0705  # Get the adapter functionality mask
+I2C_RDWR = 0x0707  # Combined R/W transfer (Linux)
 I2C_SMBUS = 0x0720
 I2C_SMBUS_WRITE = 0
 I2C_SMBUS_READ = 1
+I2C_M_RD = 0x0001
 
 I2C_SMBUS_QUICK = 0
 I2C_SMBUS_BYTE_DATA = 2
@@ -102,6 +104,21 @@ def mock_ioctl(fd, command, msg):
             msg.size == I2C_SMBUS_QUICK:
         raise IOError("Mocking SMBus Quick failed")
 
+    # Reproduce pure i2c capabiilty
+    if command == I2C_RDWR or command == 0x80106906:
+        print('Pure i2c_rdwr. Number of messages: ', msg.nmsgs)
+        # Assuming one message for now
+        inner = msg.msgs.contents
+        flags = inner.flags
+        if flags == I2C_M_RD:
+            print('Reading from test buffer at address ', inner.addr)
+            for k in range(inner.len):
+                inner.buf[k] = test_buffer[inner.addr + k]
+        else:
+            print('Writing to test buffer at address ', inner.addr)
+            for k in range(inner.len):
+                test_buffer[inner.addr + k] = inner.buf[k]
+
 
 # Mock platform.system function for Linux testing
 def mock_get_system_linux():
@@ -154,6 +171,7 @@ class TestSMBus(SMBusTestCase):
     def test_func(self):
         bus = SMBus(1)
         bus.open(1)
+        self.assertEqual(bus.I2CRDWR, I2C_RDWR, msg='I2CRDWR address incorrect')
         print("\nSupported I2C functionality: %x" % bus.funcs)
         bus.close()
 
@@ -306,6 +324,9 @@ class TestI2CMsg(SMBusTestCase):
 
 # FreeBSD test cases
 class SMBusFreeBSDTestCase(unittest.TestCase):
+    """
+    FreeBSD tests.
+    """
     def setUp(self):
         open_mock.start()
         close_mock.start()
@@ -333,9 +354,11 @@ class TestSMBusFreeBSD(SMBusFreeBSDTestCase):
 
     def test_freebsd_detected(self):
         with SMBus(1) as bus:
+            self.assertEqual(type(bus).__name__, 'SMBusFreeBSD')
+            self.assertEqual(bus.I2CRDWR, 0x80106906, msg='Wrong I2CRDWR address')
+
             self.assertTrue(bus.funcs & I2cFunc.I2C > 0)
             self.assertTrue(bus.funcs & I2cFunc.SMBUS_QUICK > 0)
-            self.assertEqual(type(bus).__name__, 'SMBusFreeBSD')
 
     def test_freebsd_enter_exit(self):
         for id in (1, '/dev/i2c-alias'):
@@ -346,7 +369,22 @@ class TestSMBusFreeBSD(SMBusFreeBSDTestCase):
 
         with SMBus() as bus:
             self.assertEqual(type(bus).__name__, 'SMBusFreeBSD')
+            self.assertEqual(bus.I2CRDWR, 0x80106906, msg='Wrong I2CRDWR address')
             self.assertIsNone(bus.fd)
             bus.open(2)
             self.assertIsNotNone(bus.fd)
         self.assertIsNone(bus.fd)
+
+    def test_freebsd_read_byte(self):
+        with SMBus(1) as bus:
+            actual = bus.read_byte(65)
+            self.assertEqual(actual, 65)
+
+    def test_freebsd_write_byte(self):
+        with SMBus(1) as bus:
+            # Address + value to write and expect on read
+            tests = [(10, 72), (20, 73)]
+            for test in tests:
+                bus.write_byte(test[0], test[1])
+                actual = bus.read_byte(test[0])
+                self.assertEqual(actual, test[1])

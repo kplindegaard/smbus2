@@ -277,7 +277,6 @@ class SMBus(object):
     """
     system = None
 
-
     def __init__(self, bus=None, force=False):
         """
         Initialize and (optionally) open an i2c bus connection.
@@ -337,6 +336,7 @@ class SMBus(object):
 
         self.fd = os.open(filepath, os.O_RDWR)
         self.funcs = self._get_funcs()
+        self.I2CRDWR = I2C_RDWR
 
     def close(self):
         """
@@ -689,19 +689,19 @@ class SMBus(object):
         :rtype: None
         """
         ioctl_data = i2c_rdwr_ioctl_data.create(*i2c_msgs)
-        ioctl(self.fd, I2C_RDWR, ioctl_data)
+        ioctl(self.fd, self.I2CRDWR, ioctl_data)
 
 
 class SMBusFreeBSD(SMBus):
-    bits = None
-
+    """
+    Subclass for I2C and SMBus communication on FreeBSD.
+    """
     def __init__(self, bus=None, force=False):
         SMBus.__init__(self, bus, force)
 
         # FreeBSD specific intialization stuff here
-        if SMBusFreeBSD.bits is None:
-            (SMBusFreeBSD.bits, _) = get_architecture()
-            self.I2CRDWR = {'64bit': 0x80106906, '32bit': 0x80086906}[SMBusFreeBSD.bits]
+        (SMBusFreeBSD.bits, _) = get_architecture()
+        self.I2CRDWR = {'64bit': 0x80106906, '32bit': 0x80086906}[SMBusFreeBSD.bits]
 
     def __enter__(self):
         """Enter handler."""
@@ -736,6 +736,29 @@ class SMBusFreeBSD(SMBus):
         return
 
     def write_byte(self, i2c_addr, value, force=None):
-        address = i2c_addr << 1 | I2C_M_RD
-        msg = i2c_msg.write(address, value)
+        """
+        Write a single byte to a device.
+
+        :param i2c_addr: i2c address
+        :type i2c_addr: int
+        :param value: value to write
+        :type value: int
+        """
+        address = i2c_addr
+        msg = i2c_msg.write(address, [value])
         self.i2c_rdwr(msg)
+
+    def read_byte(self, i2c_addr, force=None):
+        """
+        Read a single byte from a designated register.
+
+        :param i2c_addr: i2c address
+        :type i2c_addr: int
+        :param register: Register to read
+        :type register: int
+        :return: Read byte value
+        :rtype: int
+        """
+        msg = i2c_msg.read(i2c_addr, 1)
+        self.i2c_rdwr(msg)
+        return ord(msg.buf[0])
