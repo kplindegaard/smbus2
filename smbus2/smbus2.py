@@ -723,7 +723,7 @@ class SMBusFreeBSD(SMBus):
         :raise TypeError: if type(bus) is not in (int, str)
         """
         if isinstance(bus, int):
-            filepath = "/dev/iic-{}".format(bus)
+            filepath = "/dev/iic{}".format(bus)
         elif isinstance(bus, str):
             filepath = bus
         else:
@@ -731,6 +731,14 @@ class SMBusFreeBSD(SMBus):
 
         self.fd = os.open(filepath, os.O_RDWR)
         self.funcs = self._get_funcs()
+
+    def _get_funcs(self):
+        """
+        Returns a 32-bit value stating supported I2C functions.
+
+        :rtype: int
+        """
+        return 1
 
     def _set_address(self, address, force=None):
         return
