@@ -277,6 +277,13 @@ class SMBus(object):
     """
     system = None
 
+    def __new__(cls, *args, **kwargs):
+        if SMBus.system is None:
+            SMBus.system = get_system()
+        if cls is SMBus and SMBus.system == 'FreeBSD':
+            cls = SMBusFreeBSD
+        return object.__new__(cls)
+
     def __init__(self, bus=None, force=False):
         """
         Initialize and (optionally) open an i2c bus connection.
@@ -288,12 +295,10 @@ class SMBus(object):
         :param force: Use slave address even when driver is already using it.
         :type force: bool
         """
-        if SMBus.system is None:
-            SMBus.system = get_system()
         self.fd = None
         self.funcs = I2cFunc(0)
-        # if bus is not None:
-        #     self.open(bus)
+        if bus is not None:
+            self.open(bus)
         self.address = None
         self.bus = bus
         self.force = force
@@ -302,21 +307,11 @@ class SMBus(object):
 
     def __enter__(self):
         """Enter handler."""
-        if SMBus.system == 'FreeBSD':
-            self.freebsd = SMBusFreeBSD(self.bus, self.force)
-            if self.bus is not None:
-                self.freebsd.open(self.freebsd.bus)
-            return self.freebsd
-        else:
-            if self.bus is not None:
-                self.open(self.bus)
-            return self
+        return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         """Exit handler."""
         self.close()
-        if 'freebsd' in vars(self):
-            self.freebsd.close()
 
     def open(self, bus):
         """
@@ -697,21 +692,10 @@ class SMBusFreeBSD(SMBus):
     Subclass for I2C and SMBus communication on FreeBSD.
     """
     def __init__(self, bus=None, force=False):
-        SMBus.__init__(self, bus, force)
-
         # FreeBSD specific intialization stuff here
         (SMBusFreeBSD.bits, _) = get_architecture()
         self.I2CRDWR = {'64bit': 0x80106906, '32bit': 0x80086906}[SMBusFreeBSD.bits]
-
-    def __enter__(self):
-        """Enter handler."""
-        if self.bus is not None:
-            self.open(self.bus)
-        return self
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        """Exit handler."""
-        self.close()
+        SMBus.__init__(self, bus, force)
 
     def open(self, bus):
         """

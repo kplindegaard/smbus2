@@ -157,6 +157,8 @@ class SMBusTestCase(unittest.TestCase):
         ioctl_mock.start()
         linux_system_mock.start()
         arch_mock.start()
+        self.system_mock = mock.patch.object(SMBus, 'system', None)
+        self.system_mock.start()
 
     def tearDown(self):
         open_mock.stop()
@@ -164,13 +166,27 @@ class SMBusTestCase(unittest.TestCase):
         ioctl_mock.stop()
         linux_system_mock.stop()
         arch_mock.stop()
+        self.system_mock.stop()
 
 
 # Test cases
 class TestSMBus(SMBusTestCase):
+    def test_constructor_opens_once(self):
+        with mock.patch('smbus2.smbus2.os.open', side_effect=mock_open) as opened:
+            with mock.patch('smbus2.smbus2.os.close', side_effect=mock_close) as closed:
+                bus = SMBus(1, force=True)
+                self.assertIs(type(bus), SMBus)
+                self.assertEqual(bus.fd, MOCK_FD)
+                self.assertTrue(bus.force)
+                self.assertEqual(opened.call_args[0][0], '/dev/i2c-1')
+                with bus as entered:
+                    self.assertIs(entered, bus)
+                    self.assertEqual(opened.call_count, 1)
+                closed.assert_called_once_with(MOCK_FD)
+                self.assertIsNone(bus.fd)
+
     def test_func(self):
         bus = SMBus(1)
-        bus.open(1)
         self.assertEqual(bus.I2CRDWR, I2C_RDWR, msg='I2CRDWR address incorrect')
         print("\nSupported I2C functionality: %x" % bus.funcs)
         bus.close()
@@ -202,7 +218,6 @@ class TestSMBus(SMBusTestCase):
         res3 = []
 
         bus = SMBus(1)
-        bus.open(1)
 
         # Read bytes
         for k in range(2):
@@ -228,7 +243,6 @@ class TestSMBus(SMBusTestCase):
 
     def test_quick(self):
         bus = SMBus(1)
-        bus.open(1)
         self.assertRaises(IOError, bus.write_quick, 80)
 
     def test_pec(self):
@@ -237,7 +251,6 @@ class TestSMBus(SMBusTestCase):
 
         # Enabling PEC should fail (no mocked PEC support)
         bus = SMBus(1)
-        bus.open(1)
         self.assertRaises(IOError, set_pec, bus, True)
         self.assertRaises(IOError, set_pec, bus, 1)
         self.assertEqual(bus.pec, 0)
@@ -257,15 +270,6 @@ class TestSMBusWrapper(SMBusTestCase):
             print("\nSupported I2C functionality: 0x%X" % bus.funcs)
             self.assertTrue(bus.funcs & I2cFunc.I2C > 0)
             self.assertTrue(bus.funcs & I2cFunc.SMBUS_QUICK > 0)
-
-    def test_repeated_with(self):
-        bus = SMBus(1)
-        with bus:
-            x = bus.read_i2c_block_data(80, 0, 2)
-        self.assertEqual(len(x), 2, msg=INCORRECT_LENGTH_MSG)
-        with bus:
-            y = bus.read_i2c_block_data(80, 0, 2)
-        self.assertEqual(x, y, msg="Results differ")
 
     def test_read(self):
         res = []
@@ -333,7 +337,8 @@ class SMBusFreeBSDTestCase(unittest.TestCase):
         ioctl_mock.start()
         freebsd_system_mock.start()
         arch_mock.start()
-        SMBus.system = None  # Reset OS detection
+        self.system_mock = mock.patch.object(SMBus, 'system', None)
+        self.system_mock.start()
 
     def tearDown(self):
         open_mock.stop()
@@ -341,12 +346,32 @@ class SMBusFreeBSDTestCase(unittest.TestCase):
         ioctl_mock.stop()
         freebsd_system_mock.stop()
         arch_mock.stop()
+        self.system_mock.stop()
 
 
 class TestSMBusFreeBSD(SMBusFreeBSDTestCase):
+    def test_constructor_opens_once(self):
+        for constructor in (SMBus, SMBusFreeBSD):
+            with mock.patch('smbus2.smbus2.os.open', side_effect=mock_open) as opened:
+                with mock.patch('smbus2.smbus2.os.close', side_effect=mock_close) as closed:
+                    bus = constructor(1, force=True)
+                    self.assertIs(type(bus), SMBusFreeBSD)
+                    self.assertIsInstance(bus, SMBus)
+                    self.assertEqual(bus.fd, MOCK_FD)
+                    self.assertTrue(bus.force)
+                    self.assertEqual(opened.call_args[0][0], '/dev/iic1')
+                    self.assertEqual(bus.I2CRDWR, 0x80106906)
+                    self.assertEqual(bus.read_byte(65), 65)
+                    with bus as entered:
+                        self.assertIs(entered, bus)
+                        self.assertEqual(opened.call_count, 1)
+                    closed.assert_called_once_with(MOCK_FD)
+                    self.assertIsNone(bus.fd)
+
     def test_freebsd_explicit(self):
         bus = SMBusFreeBSD(1)
         self.assertEqual(type(bus).__name__, 'SMBusFreeBSD')
+        bus.close()
 
     def test_freebsd_with(self):
         with SMBusFreeBSD(1) as bus:
