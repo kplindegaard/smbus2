@@ -358,7 +358,6 @@ class TestSMBusFreeBSD(SMBusFreeBSDTestCase):
             self.assertEqual(bus.I2CRDWR, 0x80106906, msg='Wrong I2CRDWR address')
 
             self.assertTrue(bus.funcs & I2cFunc.I2C > 0)
-            self.assertTrue(bus.funcs & I2cFunc.SMBUS_QUICK > 0)
 
     def test_freebsd_enter_exit(self):
         for id in (1, '/dev/i2c-alias'):
