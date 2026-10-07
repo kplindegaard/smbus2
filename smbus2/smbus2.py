@@ -24,6 +24,7 @@ import os
 import sys
 from fcntl import ioctl
 from ctypes import c_uint32, c_uint8, c_uint16, c_ulong, c_char, POINTER, Structure, Array, Union, create_string_buffer, string_at
+import platform
 
 
 # Commands from uapi/linux/i2c-dev.h
@@ -262,11 +263,19 @@ class i2c_rdwr_ioctl_data(Structure):
 
 #############################################################
 
+def get_system():
+    return platform.system()
+
+
+def get_architecture():
+    return platform.architecture()
+
 
 class SMBus(object):
     """
     Main class for I2C and SMBus communication, providing all IO functions for device access.
     """
+    system = None
 
     def __init__(self, bus=None, force=False):
         """
@@ -279,22 +288,35 @@ class SMBus(object):
         :param force: Use slave address even when driver is already using it.
         :type force: bool
         """
+        if SMBus.system is None:
+            SMBus.system = get_system()
         self.fd = None
         self.funcs = I2cFunc(0)
-        if bus is not None:
-            self.open(bus)
+        # if bus is not None:
+        #     self.open(bus)
         self.address = None
+        self.bus = bus
         self.force = force
         self._force_last = None
         self._pec = 0
 
     def __enter__(self):
         """Enter handler."""
-        return self
+        if SMBus.system == 'FreeBSD':
+            self.freebsd = SMBusFreeBSD(self.bus, self.force)
+            if self.bus is not None:
+                self.freebsd.open(self.freebsd.bus)
+            return self.freebsd
+        else:
+            if self.bus is not None:
+                self.open(self.bus)
+            return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         """Exit handler."""
         self.close()
+        if 'freebsd' in vars(self):
+            self.freebsd.close()
 
     def open(self, bus):
         """
@@ -314,6 +336,7 @@ class SMBus(object):
 
         self.fd = os.open(filepath, os.O_RDWR)
         self.funcs = self._get_funcs()
+        self.I2CRDWR = I2C_RDWR
 
     def close(self):
         """
@@ -666,4 +689,84 @@ class SMBus(object):
         :rtype: None
         """
         ioctl_data = i2c_rdwr_ioctl_data.create(*i2c_msgs)
-        ioctl(self.fd, I2C_RDWR, ioctl_data)
+        ioctl(self.fd, self.I2CRDWR, ioctl_data)
+
+
+class SMBusFreeBSD(SMBus):
+    """
+    Subclass for I2C and SMBus communication on FreeBSD.
+    """
+    def __init__(self, bus=None, force=False):
+        SMBus.__init__(self, bus, force)
+
+        # FreeBSD specific intialization stuff here
+        (SMBusFreeBSD.bits, _) = get_architecture()
+        self.I2CRDWR = {'64bit': 0x80106906, '32bit': 0x80086906}[SMBusFreeBSD.bits]
+
+    def __enter__(self):
+        """Enter handler."""
+        if self.bus is not None:
+            self.open(self.bus)
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        """Exit handler."""
+        self.close()
+
+    def open(self, bus):
+        """
+        Open a given i2c bus on FreeBSD
+
+        :param bus: i2c bus number (e.g. 0 or 1)
+            or an absolute file path (e.g. '/dev/iic-1').
+        :type bus: int or str
+        :raise TypeError: if type(bus) is not in (int, str)
+        """
+        if isinstance(bus, int):
+            filepath = "/dev/iic{}".format(bus)
+        elif isinstance(bus, str):
+            filepath = bus
+        else:
+            raise TypeError("Unexpected type(bus)={}".format(type(bus)))
+
+        self.fd = os.open(filepath, os.O_RDWR)
+        self.funcs = self._get_funcs()
+
+    def _get_funcs(self):
+        """
+        Returns a 32-bit value stating supported I2C functions.
+
+        :rtype: int
+        """
+        return 1
+
+    def _set_address(self, address, force=None):
+        return
+
+    def write_byte(self, i2c_addr, value, force=None):
+        """
+        Write a single byte to a device.
+
+        :param i2c_addr: i2c address
+        :type i2c_addr: int
+        :param value: value to write
+        :type value: int
+        """
+        address = i2c_addr
+        msg = i2c_msg.write(address, [value])
+        self.i2c_rdwr(msg)
+
+    def read_byte(self, i2c_addr, force=None):
+        """
+        Read a single byte from a designated register.
+
+        :param i2c_addr: i2c address
+        :type i2c_addr: int
+        :param register: Register to read
+        :type register: int
+        :return: Read byte value
+        :rtype: int
+        """
+        msg = i2c_msg.read(i2c_addr, 1)
+        self.i2c_rdwr(msg)
+        return ord(msg.buf[0])
